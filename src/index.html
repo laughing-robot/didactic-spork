@@ -1,12 +1,14 @@
 <html>
 
 <head>
-    <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
+    <title>Didactic Spork</title>
+    <script
+        src="https://cdn.jsdelivr.net/gh/aframevr/aframe@df3e8672b77568845e5e360f54f4456fd4829a38/dist/aframe-master.min.js"></script>
 </head>
 
 <body>
     <script src="./index.ts"></script>
-    <a-scene>
+    <a-scene stats keyboard-shortcuts="enterVR: false" fog="type: linear; color: #AAA" renderer="antialias: false;">
         <a-box color="red" position="0 2 -5" rotation="0 45 45" scale="2 2 2"></a-box>
     </a-scene>
 </body>
