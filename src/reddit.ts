@@ -19,5 +19,5 @@ function fetchAnonymousToken() {
         });
 }
 
-const r = fetchAnonymousToken().catch(console.error);
+const r = fetchAnonymousToken();
 export { r };
