@@ -1,0 +1,12 @@
+{
+  "name": "didactic-spork",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "(MIT OR Apache-2.0)",
+  "contributors": [
+    "Peter C",
+    "Sameer P",
+    "Seongmin C",
+    "Vishnu P"
+  ]
+}
