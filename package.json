@@ -19,7 +19,7 @@
     "build": "parcel build ./src/index.html"
   },
   "dependencies": {
-    "aframe": "^0.9.2",
-    "@types/aframe": "^0.8.4"
+    "@types/aframe": "^0.8.4",
+    "aframe": "^0.9.2"
   }
 }
