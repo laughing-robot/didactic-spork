@@ -20,6 +20,13 @@ r.then(r =>
     posts
         .filter(post => !post.over_18)
         .filter(post => post.thumbnail_width && post.thumbnail_height)
-        // .map(post => [post.thumbnail, post.url] )
-        // .map(post => post.title)
-).then(console.log);
+        .filter(post => post.thumbnail.indexOf('://') >= 0)
+).then(posts =>
+    posts.forEach(post => {
+        const assets = document.getElementsByTagName('a-assets')[0];
+        const child = document.createElement("image");
+        child.setAttribute("id", `#${post.id}`)
+        child.setAttribute("srcset", `${post.thumbnail} ${post.thumbnail_width}w, ${post.url}`)
+        assets.appendChild(child);
+    })
+);
