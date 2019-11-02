@@ -8,10 +8,12 @@
 
 <body>
     <script src="./index.ts"></script>
-    <a-scene stats keyboard-shortcuts="enterVR: false" fog="type: linear; color: #AAA" renderer="antialias: false;">
+    <a-scene keyboard-shortcuts="enterVR: false" renderer="antialias: true">
         <a-assets>
             <!-- Dynamic assets go here! -->
+            <img src="./noise.png" id="ground">
         </a-assets>
+        <a-circle color="green" src="#ground" radius="100" repeat="300 300" roughness="1" rotation="-90 0 0"></a-plane>
         <a-box color="red" position="0 2 -5" rotation="0 45 45" scale="2 2 2"></a-box>
     </a-scene>
 </body>
