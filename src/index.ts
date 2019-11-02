@@ -1,4 +1,4 @@
-import { r, isThumbnailURL } from "~reddit";
+import { r } from "~reddit";
 
 // https://stackoverflow.com/questions/1484506/random-color-generator
 function getRandomColor() {
@@ -23,4 +23,3 @@ r.then(r =>
         // .map(post => [post.thumbnail, post.url] )
         // .map(post => post.title)
 ).then(console.log);
-// r.then(r => r.getHot().then(list => list.map(post => post.title)).then(console.log)).catch(console.error);;
