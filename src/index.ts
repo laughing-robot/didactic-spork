@@ -1,5 +1,6 @@
 import { r } from "~reddit";
 import { Submission } from "snoowrap";
+import { placeBuildings } from "~random";
 
 function isSuitableSubmission(submission: Submission): boolean {
     return !submission.over_18 && submission.thumbnail_height !== null && submission.thumbnail_width !== null
@@ -23,4 +24,5 @@ document.addEventListener("DOMContentLoaded", () => {
     if (document.location.hostname === 'localhost') {
         document.getElementsByTagName('a-scene')[0].setAttribute('stats', '');
     }
+    placeBuildings(20, 100, 50, 100);
 }, false);
