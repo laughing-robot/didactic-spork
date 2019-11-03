@@ -17,7 +17,6 @@ function appendSubmissionToAssets(submission: Submission) {
 // r.then(r => r.getHot()).then(submissions =>
 //     submissions.filter(isSuitableSubmission).forEach(appendSubmissionToAssets)
 // ).catch(err => {
-    
 // })
 
 document.addEventListener("DOMContentLoaded", () => {

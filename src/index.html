@@ -8,29 +8,33 @@
     <title>Planet Reddit</title>
     <script
         src="https://cdn.jsdelivr.net/gh/aframevr/aframe@df3e8672b77568845e5e360f54f4456fd4829a38/dist/aframe-master.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.0.1/dist/aframe-extras.min.js"></script>
+    <script src="./transform.ts"></script>
 </head>
 
 <body>
-    <script src="./index.ts"></script>
     <a-scene renderer="antialias: true">
         <a-assets>
             <!-- Dynamic assets go here! -->
             <img id="vh" src="./vandyhacks.svg">
             <img id="noise" src="./noise.png">
-            <a-asset-item id="fb" src="./planet_facebook.gltf"></a-asset-item>
+            <a-asset-item id="fb" src="https://raw.githubusercontent.com/laughing-robot/didactic-spork/master/src/planet_facebook.gltf"></a-asset-item>
         </a-assets>
-        <a-image src="#vh" position="0 43 -100" rotation="-45 180 0" width="10" height="11.161" material="fog: false;"></a-image>
-        <a-text position="0 35 -100" align="center" rotation="20 0 0" value="Made with love by Laughing Robot" material="fog: false;" width="60"></a-text>
+        <a-image src="#vh" position="0 43 -100" rotation="-45 180 0" width="10" height="11.161" material="fog: false;">
+        </a-image>
+        <a-text position="0 35 -100" align="center" rotation="20 0 0" value="Made with love by Laughing Robot"
+            material="fog: false;" width="60"></a-text>
         <!-- <a-entity environment="preset: threetowers; skyColor: black; horizonColor: #220000; fog: 0; ground: noise; lighting: none; groundTexture: walkernoise; dressing: towers; dressingScale: 50; dressingColor: white; groundColor: #FF5700; groundColor2: #FF6700"></a-entity> -->
-        <a-plane src="#noise" width="100" height="100" repeat="100 100" rotation="-90 0 0"></a-plane>
-        <a-sky color="black" roughness="1.0"></a-sky>
+        <a-circle src="#noise" radius="100" repeat="100 100" roughness="1.0" rotation="-90 0 0"></a-circle>
+        <a-sky color="black"></a-sky>
         <a-entity movement-controls>
             <a-entity camera look-controls="pointerLockEnabled: true" position="0 1.6 0">
                 <a-cursor color="white"></a-cursor>
             </a-entity>
         </a-entity>
-        <a-gltf-model position="1 1 1" src="#fb"></a-gltf-model>
+        <a-gltf-model position="-40 100 -100" scale="20 20 20" src="#fb"></a-gltf-model>
     </a-scene>
+    <script src="./index.ts"></script>
 </body>
 
 </html>
