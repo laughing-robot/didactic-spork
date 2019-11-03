@@ -14,9 +14,7 @@ setInterval(() => {
     document.getElementsByTagName('a-box')[0].setAttribute('color', getRandomColor());
 }, 1000);
 
-r.then(r =>
-    r.getHot()
-).then(posts =>
+r.then(r => r.getHot()).then(posts =>
     posts
         .filter(post => !post.over_18)
         .filter(post => post.thumbnail_width && post.thumbnail_height)
@@ -30,3 +28,7 @@ r.then(r =>
         assets.appendChild(child);
     })
 );
+
+if (document.location.hostname === 'localhost') {
+    document.getElementsByTagName('a-scene')[0].setAttribute('stats', '');
+}
