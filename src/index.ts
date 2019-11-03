@@ -14,11 +14,11 @@ function appendSubmissionToAssets(submission: Submission) {
     assets.appendChild(child);
 }
 
-r.then(r => r.getHot()).then(submissions =>
-    submissions.filter(isSuitableSubmission).forEach(appendSubmissionToAssets)
-).catch(err => {
+// r.then(r => r.getHot()).then(submissions =>
+//     submissions.filter(isSuitableSubmission).forEach(appendSubmissionToAssets)
+// ).catch(err => {
     
-})
+// })
 
 document.addEventListener("DOMContentLoaded", () => {
     if (document.location.hostname === 'localhost') {
