@@ -9,7 +9,7 @@
     <script
         src="https://cdn.jsdelivr.net/gh/aframevr/aframe@df3e8672b77568845e5e360f54f4456fd4829a38/dist/aframe-master.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.0.1/dist/aframe-extras.min.js"></script>
-    <script src="./transform.ts"></script>
+    <link href="index.scss" rel="stylesheet">
 </head>
 
 <body>
@@ -26,7 +26,6 @@
             material="fog: false;" width="60"></a-text>
         <!-- <a-entity environment="preset: threetowers; skyColor: black; horizonColor: #220000; fog: 0; ground: noise; lighting: none; groundTexture: walkernoise; dressing: towers; dressingScale: 50; dressingColor: white; groundColor: #FF5700; groundColor2: #FF6700"></a-entity> -->
         <a-circle src="#noise" radius="100" repeat="100 100" roughness="1.0" rotation="-90 0 0"></a-circle>
-        <a-sky color="black"></a-sky>
         <a-entity movement-controls>
             <a-entity camera look-controls="pointerLockEnabled: true" position="0 1.6 0">
                 <a-cursor color="white"></a-cursor>
