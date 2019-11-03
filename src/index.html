@@ -14,11 +14,11 @@
 
 <body>
     <script src="./index.ts"></script>
-    <a-scene stats renderer="antialias: true" environment="preset: threetowers">
+    <a-scene stats renderer="antialias: true">
         <a-assets>
             <!-- Dynamic assets go here! -->
-            <img src="./noise.png" id="ground">
         </a-assets>
+        <a-entity environment="preset: threetowers; skyColor: #FFFFFF; fog: 0.5; ground: hills; groundTexture: walkernoise; dressing: towers; groundColor: #FF5700; groundColor2: #FF6700"></a-entity>
         <a-entity movement-controls>
             <a-entity camera look-controls="pointerLockEnabled: true" shadow="false" position="0 1.6 0">
                 <a-cursor color="black"></a-cursor>
