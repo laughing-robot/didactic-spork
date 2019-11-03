@@ -1,34 +1,27 @@
 import { r } from "~reddit";
+import { Submission } from "snoowrap";
 
-// https://stackoverflow.com/questions/1484506/random-color-generator
-function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
+function isSuitableSubmission(submission: Submission): boolean {
+    return !submission.over_18 && submission.thumbnail_height !== null && submission.thumbnail_width !== null
+        && submission.thumbnail.indexOf('://') >= 0;
+}
+
+function appendSubmissionToAssets(submission: Submission) {
+    const assets = document.getElementsByTagName('a-assets')[0];
+    const child = document.createElement("image");
+    child.setAttribute("id", `#${submission.id}`)
+    child.setAttribute("srcset", `${submission.thumbnail} ${submission.thumbnail_width}w, ${submission.url}`)
+    assets.appendChild(child);
+}
+
+r.then(r => r.getHot()).then(submissions =>
+    submissions.filter(isSuitableSubmission).forEach(appendSubmissionToAssets)
+).catch(err => {
+    
+})
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.location.hostname === 'localhost') {
+        document.getElementsByTagName('a-scene')[0].setAttribute('stats', '');
     }
-    return color;
-}
-
-setInterval(() => {
-    document.getElementsByTagName('a-box')[0].setAttribute('color', getRandomColor());
-}, 1000);
-
-r.then(r => r.getHot()).then(posts =>
-    posts
-        .filter(post => !post.over_18)
-        .filter(post => post.thumbnail_width && post.thumbnail_height)
-        .filter(post => post.thumbnail.indexOf('://') >= 0)
-).then(posts =>
-    posts.forEach(post => {
-        const assets = document.getElementsByTagName('a-assets')[0];
-        const child = document.createElement("image");
-        child.setAttribute("id", `#${post.id}`)
-        child.setAttribute("srcset", `${post.thumbnail} ${post.thumbnail_width}w, ${post.url}`)
-        assets.appendChild(child);
-    })
-);
-
-if (document.location.hostname === 'localhost') {
-    document.getElementsByTagName('a-scene')[0].setAttribute('stats', '');
-}
+}, false);
