@@ -1961,8 +1961,9 @@ debug@^4.1.0:
   dependencies:
     ms "^2.1.1"
 
-"debug@github:ngokevin/debug#noTimestamp":
+debug@ngokevin/debug#noTimestamp:
   version "2.2.0"
+  uid ef5f8e66d49ce8bc64c6f282c15f8b7164409e3a
   resolved "https://codeload.github.com/ngokevin/debug/tar.gz/ef5f8e66d49ce8bc64c6f282c15f8b7164409e3a"
 
 decode-uri-component@^0.2.0:
@@ -2092,8 +2093,9 @@ diffie-hellman@^5.0.0:
     miller-rabin "^4.0.0"
     randombytes "^2.0.0"
 
-"document-register-element@github:dmarcos/document-register-element#8ccc532b7f3744be954574caf3072a5fd260ca90":
+document-register-element@dmarcos/document-register-element#8ccc532b7f3744be954574caf3072a5fd260ca90:
   version "0.5.4"
+  uid "8ccc532b7f3744be954574caf3072a5fd260ca90"
   resolved "https://codeload.github.com/dmarcos/document-register-element/tar.gz/8ccc532b7f3744be954574caf3072a5fd260ca90"
 
 dom-serializer@0:
@@ -5237,9 +5239,9 @@ send@0.17.1:
     statuses "~1.5.0"
 
 serialize-to-js@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/serialize-to-js/-/serialize-to-js-3.0.0.tgz#1fd8736744819a4df29dc85e9d04a44a4984edc3"
-  integrity sha512-WdGgi0jGnWCQXph2p3vkxceDnTfvfyXfYxherQMRcZjSaJzMQdMBAW6i0nojsBKIZ3fFOztZKKVbbm05VbIdRA==
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/serialize-to-js/-/serialize-to-js-3.0.1.tgz#7bece9cb910c5ee1433f56500db4a5303bca6a02"
+  integrity sha512-TokHD6rY0yQxMmZCjeL8Oj+XuQK6uEx8JnBjt7PuqwWa2qY79Wb/KyhEDduTUC8Gl3S7c40jefWve7f5t4L8Lw==
 
 serve-static@^1.12.4:
   version "1.14.1"
