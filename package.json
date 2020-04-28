@@ -20,7 +20,6 @@
   },
   "dependencies": {
     "@types/aframe": "^0.8.4",
-    "@types/snoowrap": "^1.19.0",
     "aframe": "~1.0.4",
     "package.json": "^2.0.1",
     "pkg.json": "^2.0.7",
