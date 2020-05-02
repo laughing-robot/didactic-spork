@@ -10,6 +10,11 @@
 [Aframe Actual Documentation - Bad](https://altspacevr.github.io/AltspaceSDK/doc/aframe/)\
 [Aframe Source Code](https://github.com/aframevr/aframe/tree/da94b61e9c7333912d1e666036598d2cd9e4d03d)\
 [Barebones Tutorial Aframe Actual - Meh](https://developer.altvr.com/building-altspacevr-apps-with-a-frame/)\
+
+## Useful Code Samples
 [Aframe Arms Demo Example](https://aframe.io/aframe/examples/animation/arms/)\
 [Aframe Arms Source Code](https://github.com/aframevr/aframe/blob/master/examples/animation/arms/index.html)\
+[Aframe Whack-A-Goblin Tutorial](https://hacks.mozilla.org/2018/03/immersive-aframe-low-poly/)\
+[Afrane Whack-A-Goblin Code](https://github.com/joshmarinacci/whack-an-imp/blob/master/step7.html)
+
 
