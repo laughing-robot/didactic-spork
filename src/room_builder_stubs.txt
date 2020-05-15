@@ -1,0 +1,43 @@
+// this is the 'root class' for all rooms which will extend this
+
+class Room {
+    constructor(position) {
+        this.position = position
+    }
+
+    //build room (should return a DOM element that we can just append to a-scene)
+    //frames (frame locations), paintings, furniture, walls, etc.
+    function build_room([a list of reddit posts - their types, their sizes, etc]) {
+        // [DOMelementRoom, numberOfPosts]
+    }
+}
+
+
+// example
+class Reception extends Room {
+    constructor(position) {}
+
+    build_room() {
+        frame1 = build_frame(x, y, z);
+        //add randomness if desired
+
+    }
+}
+
+// example2
+class ArtRoom extends Room {
+    //paintings have more space
+
+}
+
+// example3
+class GenericRoom extends Room {
+
+}
+
+// example3
+class Rule34 extends ArtRoom {
+
+}
+
+

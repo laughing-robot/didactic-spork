@@ -1,6 +1,7 @@
 import { r } from "~reddit";
 import { Submission } from "snoowrap";
 import { placeBuildings } from "~random";
+import { roomFactory  } from "~components/room_factory"
 
 function isSuitableSubmission(submission: Submission): boolean {
     return !submission.over_18 && submission.thumbnail_height !== null && submission.thumbnail_width !== null
@@ -24,5 +25,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (document.location.hostname === 'localhost') {
         document.getElementsByTagName('a-scene')[0].setAttribute('stats', '');
     }
+
     placeBuildings(20, 100, 50, 100);
+    let elem = roomFactory('FrontDesk');
+    let ascene = document.getElementsByTagName('a-scene')[0];
+    ascene.appendChild(elem);
+
+    //    one method of adding strings to the world                 //
+    //    let innerHTML = roomFactory('FrontDesk')('None');
+    //    let ascene = document.getElementsByTagName('a-scene')[0];
+    //    console.log(innerHTML);
+    //    console.log(ascene.innerHTML)
+    //    let newcontent = document.createElement('a-entity');
+    //    newcontent.innerHTML = innerHTML;
+    //    let aboxar = newcontent.getElementsByTagName('a-sphere')[0]
+    //    aboxar.setAttribute('color', 'purple')
+    //    ascene.appendChild(newcontent)
+    //
 }, false);
+
+

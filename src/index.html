@@ -10,18 +10,17 @@
         src="https://cdn.jsdelivr.net/gh/aframevr/aframe@df3e8672b77568845e5e360f54f4456fd4829a38/dist/aframe-master.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.0.1/dist/aframe-extras.min.js"></script>
     <link href="index.scss" rel="stylesheet">
-    <link href="./favicon.ico" rel="shortcut icon">
-    <link rel="apple-touch-icon" href="favicon.png">
+    <link href="../assets/images/favicon.ico" rel="shortcut icon">
+    <link rel="apple-touch-icon" href="../assets/images/favicon.png">
     <script type="text/javascript" src="./components/room_factory.js"></script>
-    <script type="text/javascript" src="./components/junk.ts"></script>
 </head>
 
 <body>
     <a-scene renderer="antialias: auto;">
         <a-assets>
             <!-- Dynamic assets go here! -->
-            <img id="vh" src="./vandyhacks.svg">
-            <img id="noise" src="./noise.png">
+            <img id="vh" src="../assets/images/vandyhacks.svg">
+            <img id="noise" src="../assets/images/noise.png">
             <a-asset-item id="fb" src="https://raw.githubusercontent.com/laughing-robot/didactic-spork/master/src/planet_facebook.gltf"></a-asset-item>
         </a-assets>
         <a-image src="#vh" position="0 43 -100" rotation="-45 180 0" width="10" height="11.161" material="fog: false;">
