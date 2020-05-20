@@ -7,7 +7,7 @@ export class Reception {
 
     buildRoom() {
         let room = document.createElement('a-entity');
-        let polygonRoom = generateRegularPolyRoom(6, 2, 4, 1, new THREE.Vector3(0, 0, 0));
+        let polygonRoom = generateRegularPolyRoom(8, 5, 10, 1, new THREE.Vector3(0, 0, 0));
         room.appendChild(polygonRoom)
 
         // add stuff to the room and also store information about where to place frames

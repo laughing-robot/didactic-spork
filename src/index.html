@@ -9,6 +9,7 @@
     <script
         src="https://cdn.jsdelivr.net/gh/aframevr/aframe@df3e8672b77568845e5e360f54f4456fd4829a38/dist/aframe-master.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.0.1/dist/aframe-extras.min.js"></script>
+    <script src="//cdn.jsdelivr.net/gh/donmccurdy/aframe-physics-system@v3.2.0/dist/aframe-physics-system.min.js"></script>
     <link href="index.scss" rel="stylesheet">
     <link href="../assets/images/favicon.ico" rel="shortcut icon">
     <link rel="apple-touch-icon" href="../assets/images/favicon.png">
@@ -16,24 +17,32 @@
 </head>
 
 <body>
-    <a-scene renderer="antialias: auto;">
+    <a-scene renderer="antialias: auto;" physics="debug: true">
         <a-assets>
             <!-- Dynamic assets go here! -->
             <img id="vh" src="../assets/images/vandyhacks.svg">
             <img id="noise" src="../assets/images/noise.png">
             <a-asset-item id="fb" src="https://raw.githubusercontent.com/laughing-robot/didactic-spork/master/src/planet_facebook.gltf"></a-asset-item>
         </a-assets>
+
+    <!-- Player -->
+      <a-entity id="rig" movement-controls kinematic-body rotation="0 -90 0">
+        <a-entity id="camera"
+                  camera
+                  position="0 1.6 0"
+                  look-controls="pointerLockEnabled: true"></a-entity>
+      </a-entity>
+
+      <!-- Ground -->
+      <a-plane opacity=0 height=500 width=500 position="0 0 0" rotation="90 0 0" static-body></a-plane>
+
+        <!--Environment -->
         <a-image src="#vh" position="0 43 -100" rotation="-45 180 0" width="10" height="11.161" material="fog: false;">
         </a-image>
         <a-text position="0 35 -100" align="center" rotation="20 0 0" value="Made with love by Laughing Robot"
             material="fog: false;" width="60"></a-text>
         <!-- <a-entity environment="preset: threetowers; skyColor: black; horizonColor: #220000; fog: 0; ground: noise; lighting: none; groundTexture: walkernoise; dressing: towers; dressingScale: 50; dressingColor: white; groundColor: #FF5700; groundColor2: #FF6700"></a-entity> -->
         <a-circle src="#noise" radius="100" repeat="100 100" roughness="1.0" rotation="-90 0 0"></a-circle>
-        <a-entity movement-controls>
-            <a-entity camera look-controls="pointerLockEnabled: true" position="0 1.6 0">
-                <a-cursor color="white"></a-cursor>
-            </a-entity>
-        </a-entity>
         <a-gltf-model position="-40 100 -100" scale="20 20 20" src="#fb"></a-gltf-model>
     </a-scene>
     <script src="./index.ts"></script>

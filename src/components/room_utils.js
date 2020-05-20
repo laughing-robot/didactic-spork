@@ -1,7 +1,5 @@
 export function generateRegularPolyRoom(numberOfWalls, h, w, d, center) {
 
-    let wall_color = ['white', 'red', 'blue', 'orange', 'red'];
-
     let theta = ((numberOfWalls - 2) * 180.0) / numberOfWalls;
     let distCenter = w/2.0 * Math.tan(toRads(theta / 2.0)); //radians or degrees?
 
@@ -14,9 +12,6 @@ export function generateRegularPolyRoom(numberOfWalls, h, w, d, center) {
 
         // compute the offset and angle
         let offset = {x:distCenter*Math.sin(mtheta), y:0, z:distCenter*Math.cos(mtheta)};
-        console.log(theta)
-        console.log(offset)
-
 
         // configure the wall appropriately
         wall.setAttribute('height', h);
@@ -24,7 +19,7 @@ export function generateRegularPolyRoom(numberOfWalls, h, w, d, center) {
         wall.setAttribute('depth', d);
         wall.setAttribute('position', center.clone().add(offset));
         wall.setAttribute('rotation', {x:0, y:90.00 - theta*i, z:0});
-        wall.setAttribute('color', wall_color[i])
+        wall.setAttribute('static-body', "");
         div.appendChild(wall);
     }
 
