@@ -1,4 +1,4 @@
-import { generateRegularPolyRoom } from '~components/room_utils'
+import { generateRegularPolyRoom } from '~rooms/room_utils'
 
 export class Reception {
     constructor(position) {

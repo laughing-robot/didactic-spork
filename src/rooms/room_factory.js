@@ -1,4 +1,4 @@
-import { Reception } from '~/components/reception_room'
+import { Reception } from '~/rooms/reception_room'
 
 function roomFactory(room_type) {
 

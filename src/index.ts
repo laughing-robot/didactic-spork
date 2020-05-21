@@ -1,7 +1,7 @@
 import { r } from "~reddit";
 import { Submission } from "snoowrap";
 import { placeBuildings } from "~random";
-import { roomFactory  } from "~components/room_factory"
+import { roomFactory  } from "~rooms/room_factory"
 
 function isSuitableSubmission(submission: Submission): boolean {
     return !submission.over_18 && submission.thumbnail_height !== null && submission.thumbnail_width !== null
