@@ -19,6 +19,7 @@ export function generateRegularPolyRoom(numberOfWalls, h, w, d, center) {
         wall.setAttribute('depth', d);
         wall.setAttribute('position', center.clone().add(offset));
         wall.setAttribute('rotation', {x:0, y:90.00 - theta*i, z:0});
+        wall.setAttribute('opacity', 0);
         wall.setAttribute('static-body', "");
         div.appendChild(wall);
     }

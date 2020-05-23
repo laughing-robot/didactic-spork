@@ -28,7 +28,7 @@
 
     <!-- Player -->
       <a-entity id="rig" movement-controls kinematic-body rotation="0 -90 0">
-        <a-entity id="camera"
+      <a-entity id="camera"
                   camera
                   position="0 1.6 0"
                   look-controls="pointerLockEnabled: true"></a-entity>
@@ -36,6 +36,7 @@
 
       <!-- Ground -->
       <a-plane opacity=0 height=500 width=500 position="0 0 0" rotation="90 0 0" static-body></a-plane>
+      <!-- <a-circle src="#noise" radius="100" repeat="100 100" roughness="1.0" rotation="-90 0 0"></a-circle> -->
 
         <!--Environment -->
         <a-image src="#vh" position="0 43 -100" rotation="-45 180 0" width="10" height="11.161" material="fog: false;">
@@ -43,10 +44,9 @@
         <a-text position="0 35 -100" align="center" rotation="20 0 0" value="Made with love by Laughing Robot"
             material="fog: false;" width="60"></a-text>
         <!-- <a-entity environment="preset: threetowers; skyColor: black; horizonColor: #220000; fog: 0; ground: noise; lighting: none; groundTexture: walkernoise; dressing: towers; dressingScale: 50; dressingColor: white; groundColor: #FF5700; groundColor2: #FF6700"></a-entity> -->
-        <a-circle src="#noise" radius="100" repeat="100 100" roughness="1.0" rotation="-90 0 0"></a-circle>
         <a-gltf-model position="-40 100 -100" scale="20 20 20" src="#fb"></a-gltf-model>
 
-        <a-entity wallbox></a-entity>
+        <a-entity box-door></a-entity>
     </a-scene>
     <script src="./index.ts"></script>
 </body>
