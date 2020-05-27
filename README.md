@@ -13,3 +13,9 @@
 [Aframe Arms Demo Example](https://aframe.io/aframe/examples/animation/arms/)\
 [Aframe Arms Source Code](https://github.com/aframevr/aframe/blob/master/examples/animation/arms/index.html)\
 
+## Useful Blender / A-Frame Tutorials
+[Mixamo + Animations](https://www.youtube.com/watch?v=hheYLOworF4)
+[Sketchfab](https://sketchfab.com/3d-models/popular?cursor=bz04JnA9MjA%3D)
+[TurboSquid](https://www.turbosquid.com/)
+
+

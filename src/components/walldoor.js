@@ -56,7 +56,7 @@ init: function () {
 
  //   this.geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
 
-    this.material = new THREE.MeshBasicMaterial( { color: 0xff0000} );
+    this.material = new THREE.MeshBasicMaterial( { color: data.color} );
     this.mesh = new THREE.Mesh(this.geometry, this.material);
     el.setObject3D('mesh', this.mesh);
   },

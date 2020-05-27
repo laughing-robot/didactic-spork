@@ -26,7 +26,7 @@ function placeBuildings(min_radius: number, max_radius: number, min_height: numb
         child.setAttribute('depth', '5');
         child.setAttribute('width', '5');
         child.setAttribute('height', `${height}`);
-        child.setAttribute('position', `${x} 0 ${y}`)
+        child.setAttribute('position', `${x} ${height/2} ${y}`)
         document.getElementsByTagName('a-scene')[0].appendChild(child);
     }
 }
