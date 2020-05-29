@@ -24,6 +24,16 @@
             <img id="vh" src="../assets/images/vandyhacks.svg">
             <img id="noise" src="../assets/images/noise.png">
             <a-asset-item id="fb" src="https://raw.githubusercontent.com/laughing-robot/didactic-spork/master/src/planet_facebook.gltf"></a-asset-item>
+       <a-asset-item 
+          id="glbtestmodel"
+          response-type="arraybuffer" 
+          src="gltf/kitchentest.glb"
+       </a-asset-item> 
+        <a-asset-item 
+            id="desk" 
+            response-type="arraybuffer" 
+            src="gltf/Reception_table.glb" > </a-asset-item> 
+
         </a-assets>
 
     <!-- Player -->
@@ -45,7 +55,14 @@
             material="fog: false;" width="60"></a-text>
         <!-- <a-entity environment="preset: threetowers; skyColor: black; horizonColor: #220000; fog: 0; ground: noise; lighting: none; groundTexture: walkernoise; dressing: towers; dressingScale: 50; dressingColor: white; groundColor: #FF5700; groundColor2: #FF6700"></a-entity> -->
         <a-gltf-model position="-40 100 -100" scale="20 20 20" src="#fb"></a-gltf-model>
+        <a-gltf-model position="0 0 0" scale="0.05 0.05 0.05" src="#desk"></a-gltf-model> 
 
+       <a-entity 
+          id="glbtest"
+          gltf-model="#glbtestmodel"
+          scale="50 50 50"
+          position="0 1 -2">
+      </a-entity> 
     </a-scene>
     <script src="./index.ts"></script>
 </body>
