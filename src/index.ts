@@ -1,7 +1,7 @@
 import { r } from "~reddit";
 import { Submission } from "snoowrap";
 import { placeBuildings } from "~random";
-import { roomFactory  } from "~rooms/room_factory"
+import { tileFactory  } from "~builder/tile_factory"
 
 function isSuitableSubmission(submission: Submission): boolean {
     return !submission.over_18 && submission.thumbnail_height !== null && submission.thumbnail_width !== null
@@ -27,9 +27,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     placeBuildings(20, 100, 50, 100);
-    let elem = roomFactory('FrontDesk');
+    
+    let elem = tileFactory({
+        room_type: "art_tile",
+        roomHeight: 5,
+        roomDepth: 1, 
+        tileWidth: 100,
+        tileHeight: 50,
+        center: new THREE.Vector3(0,0,0)
+    });
+
     let ascene = document.getElementsByTagName('a-scene')[0];
     ascene.appendChild(elem);
+
+    setTimeout(function() {
+
+    let item = document.getElementById("kek");
+    item.setAttribute("width", 100);
+    console.log(item);
+
+    }, 4000);
 
     //    one method of adding strings to the world                 //
     //    let innerHTML = roomFactory('FrontDesk')('None');

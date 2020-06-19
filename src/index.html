@@ -13,31 +13,26 @@
     <link href="index.scss" rel="stylesheet">
     <link href="../assets/images/favicon.ico" rel="shortcut icon">
     <link rel="apple-touch-icon" href="../assets/images/favicon.png">
-    <script type="text/javascript" src="./rooms/room_factory.js"></script>
+    <script type="text/javascript" src="./builder/tile_factory.js"></script>
     <script type="text/javascript" src="./components/walldoor.js"></script>
 </head>
 
 <body>
-    <a-scene renderer="antialias: auto;" physics="debug: true">
+    <a-scene renderer="precision: mediump; antialias: auto; alpha: true; colorManagement: true;" physics="debug: true">
         <a-assets>
             <!-- Dynamic assets go here! -->
             <img id="vh" src="../assets/images/vandyhacks.svg">
             <img id="noise" src="../assets/images/noise.png">
             <a-asset-item id="fb" src="https://raw.githubusercontent.com/laughing-robot/didactic-spork/master/src/planet_facebook.gltf"></a-asset-item>
-       <a-asset-item 
-          id="glbtestmodel"
-          response-type="arraybuffer" 
-          src="gltf/kitchentest.glb"
-       </a-asset-item> 
-        <a-asset-item 
-            id="desk" 
-            response-type="arraybuffer" 
-            src="gltf/Reception_table.glb" > </a-asset-item> 
-
+       <a-asset-item
+           id="desk"
+           response-type="arraybuffer" 
+           src="gltf/reception/scene.glb">
+        </a-asset-item>
         </a-assets>
 
     <!-- Player -->
-      <a-entity id="rig" movement-controls kinematic-body rotation="0 -90 0">
+      <a-entity id="rig" movement-controls rotation="0 -90 0">
       <a-entity id="camera"
                   camera
                   position="0 1.6 0"
@@ -55,14 +50,8 @@
             material="fog: false;" width="60"></a-text>
         <!-- <a-entity environment="preset: threetowers; skyColor: black; horizonColor: #220000; fog: 0; ground: noise; lighting: none; groundTexture: walkernoise; dressing: towers; dressingScale: 50; dressingColor: white; groundColor: #FF5700; groundColor2: #FF6700"></a-entity> -->
         <a-gltf-model position="-40 100 -100" scale="20 20 20" src="#fb"></a-gltf-model>
-        <a-gltf-model position="0 0 0" scale="0.05 0.05 0.05" src="#desk"></a-gltf-model> 
+        <!-- <a-gltf-model position="0 0 0" scale="0.5 0.5 0.5" src="#desk"></a-gltf-model> -->
 
-       <a-entity 
-          id="glbtest"
-          gltf-model="#glbtestmodel"
-          scale="50 50 50"
-          position="0 1 -2">
-      </a-entity> 
     </a-scene>
     <script src="./index.ts"></script>
 </body>
