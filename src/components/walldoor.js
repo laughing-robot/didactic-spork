@@ -40,7 +40,7 @@ init: function () {
         data.height !== oldData.height ||
         data.depth !== oldData.depth) {
         console.log("DIMENSION CHANGE DETECTED");
-        this.recreate_walldoor();
+        this.create_walldoor();
     }
 
     // Material-related properties changed. Update the material.
@@ -49,28 +49,43 @@ init: function () {
     }
   },
 
-    getBoundingBox: function(el) {
+    setBoundingBox: function(el) {
 
-        let physics_box = {
-            body: "type: static; mass: 5; shape: none;",
-            shape1: "shape: box; halfExtents: 5 5 5; offsets: 0 0 0;",
-            shape1: "shape: box; halfExtents: 5 5 5; offsets: 0 0 0;",
-            shape1: "shape: box; halfExtents: 5 5 5; offsets: 0 0 0;",
-        };
+        let dims = this.computeBoxDims();
 
+        let constructShapeString = function(dims) {
+            return `shape: box; halfExtents: ${dims.depth/2} ${dims.height/2} ${dims.width/2};
+            \ offset: ${dims.offset.x} ${dims.offset.z}, ${dims.offset.y};`
+        }
+
+
+        // let physics_box = {
+        //     body: "type: static; mass: 5; shape: none;",
+        //     shape1: "shape: box; halfExtents: 5 5 5; offsets: 0 0 0;",
+        //     shape1: "shape: box; halfExtents: 5 5 5; offsets: 0 0 0;",
+        //     shape1: "shape: box; halfExtents: 5 5 5; offsets: 0 0 0;",
+        // };
+        //
+        //
 
         el.setAttribute("body", "type: static; shape: none;");
-        el.setAttribute("shape__main", physics_box.shape1);
-        el.setAttribute("shape__side", physics_box.shape3);
-        el.setAttribute("shape__side2", physics_box.shape3);
+        el.setAttribute("shape__main",  constructShapeString(dims['box1']));
+        el.setAttribute("shape__side",  constructShapeString(dims['box2']));
+        el.setAttribute("shape__otherside", constructShapeString(dims['box3']));
 
         return el;
     },
 
     computeBoxDims: function() {
 
-        let el = this.el;
         let data = this.data;
+
+        if (this.data) {
+            data = this.data
+        }
+         else {
+             data = this.attrValue;
+         }
 
         let arrangeDims = function(dims, offset) {
             return {width: dims[0], height: dims[1], depth: dims[2], offset: {x: offset[0], z:offset[1], y:offset[2]}};
@@ -88,9 +103,9 @@ init: function () {
 
         let boxdims = {};
 
-        boxdims['box1'] = arrangeDims([data.depth, data.height, box1width], [0, 0, box1offset]);
-        boxdims['box2'] = arrangeDims([data.depth, data.height, box2width], [0, 0, box2offset]);
-        boxdims['box3'] = arrangeDims([data.depth, box3height, data.doorwidth], [0, box3heightoffset, box3offset]);
+        boxdims['box1'] = arrangeDims([data.depth, data.height, box1width], [box1offset, 0, 0]);
+        boxdims['box2'] = arrangeDims([data.depth, data.height, box2width], [box2offset, 0, 0]);
+        boxdims['box3'] = arrangeDims([data.depth, box3height, data.doorwidth], [box3offset, box3heightoffset, 0]);
 
         return boxdims;
     },
@@ -99,7 +114,7 @@ init: function () {
 
         let generateBoxGeo = function (dims) {
             let boxgeo = new THREE.BoxGeometry(dims.depth, dims.height, dims.width);
-            boxgeo.translate(dims.offset.y, dims.offset.z, dims.offset.x);
+            boxgeo.translate(dims.offset.x, dims.offset.z, dims.offset.y);
 
             return boxgeo;
         }

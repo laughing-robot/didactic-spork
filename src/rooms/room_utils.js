@@ -30,7 +30,7 @@ export function generateRegularPolyRoom(roomProps) {
 
             wall = document.createElement('a-entity');
             wall.setAttribute('box-door', attributes);
-            wall.components["box-door"].getBoundingBox(wall);
+            wall.components["box-door"].setBoundingBox(wall);
         }
         else {
             wall = document.createElement('a-box');
@@ -56,7 +56,7 @@ export function generateRegularPolyRoom(roomProps) {
             let normal = position.clone().sub(centerplane).normalize().multiplyScalar(-1.0);
 
             let frames = addFrames({h: roomProps.h, w: roomProps.w, d: roomProps.d, pos: position },
-                 {normal: normal, facepoint: normal.clone().multiplyScalar(roomProps.w/2.0).add(position), rot: angles, num: 1, w:0.1});
+                {normal: normal, facepoint: normal.clone().multiplyScalar(roomProps.w/2.0).add(position), rot: angles, num: 1, w:0.1});
                 appendChildren(wall, frames);
         }
 
@@ -64,7 +64,6 @@ export function generateRegularPolyRoom(roomProps) {
         wall.setAttribute('rotation', angles);
 
         div.appendChild(wall);
-
     }
 
     return div;

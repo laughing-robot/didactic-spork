@@ -18,7 +18,7 @@
 </head>
 
 <body>
-    <a-scene renderer="precision: mediump; antialias: auto; alpha: true; colorManagement: true;" physics="debug: true">
+    <a-scene renderer="precision: lowp; antialias: auto; alpha: true; colorManagement: true;" physics="debug: true">
         <a-assets>
             <!-- Dynamic assets go here! -->
             <img id="vh" src="../assets/images/vandyhacks.svg">
@@ -32,21 +32,12 @@
         </a-assets>
 
     <!-- Player -->
-      <a-entity id="rig" movement-controls rotation="0 -90 0">
+      <a-entity id="rig" movement-controls rotation="0 90 0">
       <a-entity id="camera"
                   camera
                   position="0 1.6 0"
                   look-controls="pointerLockEnabled: true"></a-entity>
       </a-entity>
-
-      <a-box       
-          id="kek"
-          body="type: static; mass: 5; shape: none;"
-          shape__main="shape: cylinder;
-                       height: 2;
-                       radiusTop: 2;
-                       radiusBottom: 2;">
-      </a-box>
 
       <!-- Ground -->
       <a-plane opacity=0 height=500 width=500 position="0 0 0" rotation="90 0 0" static-body></a-plane>
