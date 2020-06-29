@@ -1,7 +1,7 @@
-import { r } from "~reddit";
 import { Submission } from "snoowrap";
 import { placeBuildings } from "~random";
 import { tileFactory  } from "~builder/tile_factory"
+import { ExperienceManager  } from "~experiencemanager"
 
 function isSuitableSubmission(submission: Submission): boolean {
     return !submission.over_18 && submission.thumbnail_height !== null && submission.thumbnail_width !== null
@@ -40,13 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let ascene = document.getElementsByTagName('a-scene')[0];
     ascene.appendChild(elem);
 
-    setTimeout(function() {
+    var mexperience = new ExperienceManager();
+    mexperience.update();
 
-    let item = document.getElementById("kek");
-    item.setAttribute("width", 100);
-    console.log(item);
-
-    }, 4000);
+    let mbox = document.getElementById('kek');
+    console.log(mbox);
 
     //    one method of adding strings to the world                 //
     //    let innerHTML = roomFactory('FrontDesk')('None');

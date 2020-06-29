@@ -1,4 +1,5 @@
-import { generateRegularPolyRoom, getWidth, appendChildren } from '~rooms/room_utils'
+import { getWidth, appendChildren } from '~rooms/room_utils'
+import { PolyRoom  } from '~rooms/polyRoom'
 
 export class ArtTile {
     constructor(position) {
@@ -10,26 +11,27 @@ export class ArtTile {
         switch(room_type) {
             case 'octagon':
                 return function(mcenter) {
-                        return generateRegularPolyRoom({
+                        return new PolyRoom({
                             numWalls: 8,
                             h: roomProps.tileProps.roomHeight,
                             w: roomProps.wallWidth,
                             d: roomProps.tileProps.roomDepth,
                             center: mcenter,
+                            addFrames: true,
                             wallsWithDoors: [0, 2, 4, 6]
-                        });
+                        }).buildRoom().getRoom();
                 }
                 break;
             case 'rectangle':
                 return function(mcenter) {
-                    return generateRegularPolyRoom({
+                    return new PolyRoom({
                             numWalls: 4,
                             h: roomProps.tileProps.roomHeight,
                             w: roomProps.wallWidth,
                             d: roomProps.tileProps.roomDepth,
                             center: mcenter,
                             wallsWithDoors: [0, 2]
-                        });
+                        }).buildRoom().getRoom();
                 }
                 break;
         };
@@ -53,7 +55,6 @@ export class ArtTile {
         let octRoom1 = octGen(new THREE.Vector3(0, 0, 0).subVectors(tileProps.center, octOffset));
         let octRoom2 = octGen(new THREE.Vector3(0, 0, 0).addVectors(tileProps.center, octOffset));
 
-        console.log(octRoom2);
 
         let rectMidOffset = new THREE.Vector3(0,0,0);
         let rectEdgeOffset = new THREE.Vector3(rectWidth/2 + octRoomWidth/2,0,0).add(octOffset);
@@ -63,7 +64,7 @@ export class ArtTile {
         let rectRoom2 = rectGen(new THREE.Vector3(0, 0, 0).subVectors(tileProps.center, rectEdgeOffset));
         let rectRoom3 = rectGen(new THREE.Vector3(0, 0, 0).addVectors(tileProps.center, rectEdgeOffset));
 
-         appendChildren(room, [octRoom1, octRoom2, rectRoom1, rectRoom2, rectRoom3]);
+        appendChildren(room, [octRoom1, octRoom2, rectRoom1, rectRoom2, rectRoom3]);
 
         // add stuff to the room and also store information about where to place frames
         return room;

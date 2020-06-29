@@ -39,6 +39,15 @@
                   look-controls="pointerLockEnabled: true"></a-entity>
       </a-entity>
 
+      <a-box       
+          id="kek"
+          body="type: static; mass: 5; shape: none;"
+          shape__main="shape: cylinder;
+                       height: 2;
+                       radiusTop: 2;
+                       radiusBottom: 2;">
+      </a-box>
+
       <!-- Ground -->
       <a-plane opacity=0 height=500 width=500 position="0 0 0" rotation="90 0 0" static-body></a-plane>
       <!-- <a-circle src="#noise" radius="100" repeat="100 100" roughness="1.0" rotation="-90 0 0"></a-circle> -->

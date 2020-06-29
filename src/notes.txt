@@ -1,0 +1,4 @@
+1) have an ordered list of "spots to fill" for a room
+2) we can just pass in x items and have the room display them
+3) need a nice format to pass in the reddit portraits
+4) need a way to track player location and generate rooms

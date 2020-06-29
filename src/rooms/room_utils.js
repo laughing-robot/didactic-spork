@@ -14,7 +14,7 @@ export function generateRegularPolyRoom(roomProps) {
         let mtheta = toRads((360.0 / numWalls) * i + 270.0);
         let offset = {x:distCenter*Math.sin(mtheta), y:roomProps.h/2.0, z:distCenter*Math.cos(mtheta)};
         let isDoor = roomProps.wallsWithDoors.indexOf(i) >= 0;
-        var physics = "";
+        var physics = "shape: box;";
         var wall;
 
         if (isDoor) {
@@ -30,36 +30,75 @@ export function generateRegularPolyRoom(roomProps) {
 
             wall = document.createElement('a-entity');
             wall.setAttribute('box-door', attributes);
-            physics = "shape: mesh;";
+            wall.components["box-door"].getBoundingBox(wall);
         }
         else {
             wall = document.createElement('a-box');
             wall.setAttribute('height', roomProps.h);
             wall.setAttribute('width', roomProps.w);
             wall.setAttribute('depth', roomProps.d);
+            wall.setAttribute('body', 'type: static; shape: none;');
+            wall.setAttribute('shape__main', `shape: box; halfExtents: ${roomProps.w/2.0}
+            \n${roomProps.h/2.0} ${roomProps.d/2.0}`);
         }
 
 
+        let position = roomProps.center.clone().add(offset);
+
+
+        let increment_angle = (180.0 - theta);
+        let angles = {x:0, y:(90.00 + increment_angle*i), z:0};
 
         // configure the wall appropriately
-        wall.setAttribute('position', roomProps.center.clone().add(offset));
-        wall.setAttribute('rotation', {x:0, y:90.00 - theta*i, z:0});
-        wall.setAttribute('static-body', physics);
+
+        if (roomProps.addFrames) {
+            let centerplane = roomProps.center.clone().setZ(position.z);
+            let normal = position.clone().sub(centerplane).normalize().multiplyScalar(-1.0);
+
+            let frames = addFrames({h: roomProps.h, w: roomProps.w, d: roomProps.d, pos: position },
+                 {normal: normal, facepoint: normal.clone().multiplyScalar(roomProps.w/2.0).add(position), rot: angles, num: 1, w:0.1});
+                appendChildren(wall, frames);
+        }
+
+        wall.setAttribute('position', position);
+        wall.setAttribute('rotation', angles);
+
         div.appendChild(wall);
+
     }
 
     return div;
+}
+
+// returns a layout of frames given a wall (inside)
+// frame_plane: position adjusted and the rotation
+// compute maximum frame size
+function addFrames(wallProps, frameProps) {
+
+    let frames = [];
+
+    let i;
+
+    for(i = 0; i < frameProps.num; ++i) {
+        let frame = document.createElement('a-box');
+        frame.setAttribute("width", frameProps.w);
+        frame.setAttribute("position", new THREE.Vector3(0,0,wallProps.d/2.0));
+        frame.setAttribute("rotation", new THREE.Vector3(0, 90, 0));
+        frame.setAttribute('static-body', "shape: hull;");
+        frames.push(frame);
+    };
+
+    return frames;
 }
 
 function toRads(degrees) {
     return degrees * Math.PI / 180.0;
 }
 
-
 //this only works for non-rotated, even polys
 export function getWidth(w, numWalls) {
     let theta = ((numWalls - 2) * 180.0) / numWalls;
-    let angle = (180.0 - theta)
+    let angle = (180.0 - theta);
     let width = w/2;
     var i;
 

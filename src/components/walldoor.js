@@ -1,50 +1,3 @@
-function recreate_walldoor(el, data, obj) {
-    let box1width = data.dooroffset;
-    let box2width = (data.width - data.doorwidth - data.dooroffset);
-    let box3width = data.doorwidth;
-    let box3height = data.height - data.doorheight;
-
-    let box1offset = box1width / 2.0 - data.width / 2.0;
-    let box3offset = box1width / 2.0 + box3width / 2.0 + box1offset;
-    let box2offset = box3offset + box3width/2.0 + box2width/2.0;
-    let box3heightoffset = data.doorheight/2.0;
-
-    // d, h, w
-    box1geo = new THREE.BoxGeometry(data.depth, data.height, box1width);
-    box1geo.translate(0, 0, box1offset)
-
-    box2geo = new THREE.BoxGeometry(data.depth, data.height, box2width);
-    box2geo.translate(0, 0, box2offset);
-
-    box3geo = new THREE.BoxGeometry(data.depth, box3height, data.doorwidth);
-    box3geo.translate(0, box3heightoffset, box3offset);
-
-    box1mesh = new THREE.Mesh(box1geo);
-    box2mesh = new THREE.Mesh(box2geo);
-    box3mesh = new THREE.Mesh(box3geo);
-
-
-    obj.geometry = new THREE.Geometry();
-    obj.geometry.merge(box1mesh.geometry, box1mesh.matrix);
-    obj.geometry.merge(box2mesh.geometry, box2mesh.matrix);
-    obj.geometry.merge(box3mesh.geometry, box3mesh.matrix);
-    obj.geometry.rotateY(Math.PI/2.0);
-
- //   obj.geometry = new THREE.Geometry();
-
- //   obj.geometry.vertices.push(
- //   new THREE.Vector3( -10,  10, 0 ),
- //   new THREE.Vector3( -10, -10, 0 ),
- //   new THREE.Vector3(  10, -10, 0 )
- //   );
-
- //   obj.geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
-
-    obj.material = new THREE.MeshBasicMaterial( { color: data.color} );
-    obj.mesh = new THREE.Mesh(obj.geometry, obj.material);
-    el.setObject3D('mesh', obj.mesh);
-}
-
 AFRAME.registerComponent('box-door', {
 
 schema: {
@@ -60,7 +13,8 @@ schema: {
 init: function () {
     var data = this.data;
     var el = this.el;
-    recreate_walldoor(el, data, this);
+
+    this.create_walldoor();
 
     this.el.addEventListener('componentChanged',function(e){
         console.log("LISTENER TRIGGERED");
@@ -86,12 +40,109 @@ init: function () {
         data.height !== oldData.height ||
         data.depth !== oldData.depth) {
         console.log("DIMENSION CHANGE DETECTED");
-        recreate_walldoor(el, data, this);
+        this.recreate_walldoor();
     }
 
     // Material-related properties changed. Update the material.
     if (data.color !== oldData.color) {
       el.getObject3D('mesh').material.color = data.color;
     }
-  }
+  },
+
+    getBoundingBox: function(el) {
+
+        let physics_box = {
+            body: "type: static; mass: 5; shape: none;",
+            shape1: "shape: box; halfExtents: 5 5 5; offsets: 0 0 0;",
+            shape1: "shape: box; halfExtents: 5 5 5; offsets: 0 0 0;",
+            shape1: "shape: box; halfExtents: 5 5 5; offsets: 0 0 0;",
+        };
+
+
+        el.setAttribute("body", "type: static; shape: none;");
+        el.setAttribute("shape__main", physics_box.shape1);
+        el.setAttribute("shape__side", physics_box.shape3);
+        el.setAttribute("shape__side2", physics_box.shape3);
+
+        return el;
+    },
+
+    computeBoxDims: function() {
+
+        let el = this.el;
+        let data = this.data;
+
+        let arrangeDims = function(dims, offset) {
+            return {width: dims[0], height: dims[1], depth: dims[2], offset: {x: offset[0], z:offset[1], y:offset[2]}};
+        };
+
+        let box1width = data.dooroffset;
+        let box2width = (data.width - data.doorwidth - data.dooroffset);
+        let box3width = data.doorwidth;
+        let box3height = data.height - data.doorheight;
+
+        let box1offset = box1width / 2.0 - data.width / 2.0;
+        let box3offset = box1width / 2.0 + box3width / 2.0 + box1offset;
+        let box2offset = box3offset + box3width/2.0 + box2width/2.0;
+        let box3heightoffset = data.doorheight/2.0;
+
+        let boxdims = {};
+
+        boxdims['box1'] = arrangeDims([data.depth, data.height, box1width], [0, 0, box1offset]);
+        boxdims['box2'] = arrangeDims([data.depth, data.height, box2width], [0, 0, box2offset]);
+        boxdims['box3'] = arrangeDims([data.depth, box3height, data.doorwidth], [0, box3heightoffset, box3offset]);
+
+        return boxdims;
+    },
+
+    create_walldoor: function () {
+
+        let generateBoxGeo = function (dims) {
+            let boxgeo = new THREE.BoxGeometry(dims.depth, dims.height, dims.width);
+            boxgeo.translate(dims.offset.y, dims.offset.z, dims.offset.x);
+
+            return boxgeo;
+        }
+
+    let el = this.el;
+    let data = this.data;
+
+    let dims = this.computeBoxDims();
+
+    // d, h, w
+    box1geo = generateBoxGeo(dims['box1']);
+    box2geo = generateBoxGeo(dims['box2']);
+    box3geo = generateBoxGeo(dims['box3']);
+
+
+    // box3geo = new THREE.BoxGeometry(data.depth, box3height, data.doorwidth);
+    // box3geo.translate(0, box3heightoffset, box3offset);
+
+    box1mesh = new THREE.Mesh(box1geo);
+    box2mesh = new THREE.Mesh(box2geo);
+    box3mesh = new THREE.Mesh(box3geo);
+
+
+    this.geometry = new THREE.Geometry();
+    this.geometry.merge(box1mesh.geometry, box1mesh.matrix);
+    this.geometry.merge(box2mesh.geometry, box2mesh.matrix);
+    this.geometry.merge(box3mesh.geometry, box3mesh.matrix);
+    //this.geometry.rotateY(3*Math.PI/2.0);
+
+ //   this.geometry = new THREE.Geometry();
+
+ //   this.geometry.vertices.push(
+ //   new THREE.Vector3( -10,  10, 0 ),
+ //   new THREE.Vector3( -10, -10, 0 ),
+ //   new THREE.Vector3(  10, -10, 0 )
+ //   );
+
+ //   this.geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
+
+    this.material = new THREE.MeshBasicMaterial( { color: data.color} );
+    this.mesh = new THREE.Mesh(this.geometry, this.material);
+    el.setObject3D('mesh', this.mesh);
+}
+
+
 });

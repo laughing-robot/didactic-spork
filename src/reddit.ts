@@ -7,7 +7,7 @@ function fetchAnonymousToken() {
     return fetch('https://www.reddit.com/api/v1/access_token', {
         method: 'post',
         body: form,
-        headers: { authorization: `Basic ${btoa('bNMBK9jcHAIISw:')}` },
+        headers: { authorization: `Basic ${btoa('QVcuekA-OboAwA:DAuQF1z5DoWRzT4QbFzvN3nI0lw')}` },
         credentials: 'omit',
     }).then(response => response.text())
         .then(JSON.parse)
