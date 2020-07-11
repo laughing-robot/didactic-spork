@@ -6,6 +6,8 @@ export class PolyRoom extends Room {
     constructor(roomProps) {
         super(roomProps);
         this.room = null;
+        this.margin = 0.25;
+        this.padding = 0.5;
     }
 
     buildRoom() {
@@ -13,7 +15,22 @@ export class PolyRoom extends Room {
         return this;
     }
 
-    acceptPosts(postData) {
+    //accept an array of potential posts (their size and dims)
+    //given all available walls in our room we apply and tell which ones we can fit
+    acceptPosts(submissionData) {
+
+        let subData  = submissionData.clone();
+
+        this.room.children.forEach(function (item, index) {
+
+            for ( i = 0; i < subData.length; ++i ) {
+
+            }
+
+        });
+    }
+
+    addFrames(frames, wall) {
 
     }
 

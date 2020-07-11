@@ -51,14 +51,14 @@ export function generateRegularPolyRoom(roomProps) {
 
         // configure the wall appropriately
 
-        if (roomProps.addFrames) {
-            let centerplane = roomProps.center.clone().setZ(position.z);
-            let normal = position.clone().sub(centerplane).normalize().multiplyScalar(-1.0);
+        // if (roomProps.addFrames) {
+        //     let centerplane = roomProps.center.clone().setZ(position.z);
+        //     let normal = position.clone().sub(centerplane).normalize().multiplyScalar(-1.0);
 
-            let frames = addFrames({h: roomProps.h, w: roomProps.w, d: roomProps.d, pos: position },
-                {normal: normal, facepoint: normal.clone().multiplyScalar(roomProps.w/2.0).add(position), rot: angles, num: 1, w:0.1});
-                appendChildren(wall, frames);
-        }
+        //     let frames = addFrames({h: roomProps.h, w: roomProps.w, d: roomProps.d, pos: position },
+        //         {normal: normal, facepoint: normal.clone().multiplyScalar(roomProps.w/2.0).add(position), rot: angles, num: 1, w:0.1});
+        //         appendChildren(wall, frames);
+        // }
 
         wall.setAttribute('position', position);
         wall.setAttribute('rotation', angles);
@@ -69,6 +69,7 @@ export function generateRegularPolyRoom(roomProps) {
     return div;
 }
 
+//TODO: FIX THIS FUNCTION TO WORK WITH X FRAMES
 // returns a layout of frames given a wall (inside)
 // frame_plane: position adjusted and the rotation
 // compute maximum frame size
@@ -83,7 +84,7 @@ function addFrames(wallProps, frameProps) {
         frame.setAttribute("width", frameProps.w);
         frame.setAttribute("position", new THREE.Vector3(0,0,wallProps.d/2.0));
         frame.setAttribute("rotation", new THREE.Vector3(0, 90, 0));
-        frame.setAttribute('static-body', "shape: hull;");
+        frame.setAttribute('static-body', "");
         frames.push(frame);
     };
 

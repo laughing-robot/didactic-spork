@@ -1,3 +1,4 @@
+0.5) WE HAVE TO FIX FRAMES (PER WALL BASIS: FRAME SPECIFIER OR LOCATION SPECIFIER)
 1) have an ordered list of "spots to fill" for a room
 2) we can just pass in x items and have the room display them
 3) need a nice format to pass in the reddit portraits

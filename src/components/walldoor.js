@@ -29,11 +29,9 @@ init: function () {
     var data = this.data;
     var el = this.el;
 
-    console.log("UPDATE FUNCTION HIT...");
-
     // If `oldData` is empty, then this means we're in the initialization process.
     // No need to update.
-    if (Object.keys(oldData).length === 0) { console.log("exit"); return; }
+    if (Object.keys(oldData).length === 0) { return; }
 
     // Geometry-related properties changed. Update the geometry.
     if (data.width !== oldData.width ||

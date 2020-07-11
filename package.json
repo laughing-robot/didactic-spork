@@ -10,15 +10,24 @@
     "Vishnu P"
   ],
   "devDependencies": {
+    "@babel/core": "^7.10.4",
+    "@babel/plugin-transform-modules-commonjs": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
+    "@types/jest": "^26.0.4",
+    "babel-jest": "^26.1.0",
+    "jest": "^26.1.0",
     "parcel-bundler": "^1.12.4",
     "sass": "^1.23.3",
+    "ts-jest": "^26.1.1",
     "typescript": "^3.7.2"
   },
   "scripts": {
     "cleanup": "rm -rf .cache dist",
     "start": "parcel ./src/index.html --open",
     "build": "parcel build ./src/index.html",
-    "dev": "npm run cleanup && npm run build"
+    "dev": "npm run cleanup && npm run build",
+    "test": "jest --config ./jest.config.js src/test/*"
   },
   "dependencies": {
     "@types/aframe": "^0.8.4",
@@ -28,5 +37,25 @@
     "pkg.json": "^2.0.7",
     "snoowrap": "^1.21.0"
   },
-   "assetsPath": "./assets/"
+  "babel": {
+    "env": {
+      "test": {
+        "presets": [
+          [
+            "@babel/preset-env",
+            {
+              "targets": {
+                "node": "current"
+              }
+            }
+          ],
+          "@babel/preset-typescript"
+        ],
+        "plugins": [
+          "@babel/plugin-transform-modules-commonjs"
+        ]
+      }
+    }
+  },
+  "assetsPath": "./assets/"
 }
