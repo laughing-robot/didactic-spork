@@ -27,7 +27,7 @@
     "start": "parcel ./src/index.html --open",
     "build": "parcel build ./src/index.html",
     "dev": "npm run cleanup && npm run build",
-    "test": "jest --config ./jest.config.js src/test/*"
+    "test": "jest --config ./jest.config.js -i test/* -t"
   },
   "dependencies": {
     "@types/aframe": "^0.8.4",
@@ -35,7 +35,9 @@
     "package.json": "^2.0.1",
     "parcel-plugin-asset-copier": "^1.0.0",
     "pkg.json": "^2.0.7",
-    "snoowrap": "^1.21.0"
+    "random": "^2.2.0",
+    "snoowrap": "^1.21.0",
+    "src": "^1.1.2"
   },
   "babel": {
     "env": {

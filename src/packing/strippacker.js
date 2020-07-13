@@ -4,7 +4,13 @@ import { EdgeList } from "~edgeList"
 // take in a bunch of surfaces or 'bins'
 // return coordinates on the surfaces
 // rectangles are sorted from thickest to thinest
-function packIt(rectangles, bins) {
+
+export function hello() {
+    console.log("hello");
+
+}
+
+export function packIt(rectangles, bins) {
 
     let i, j;
 
@@ -76,7 +82,6 @@ function addSpaces(freeSpaces, freeSpaceCandidates) {
     });
 
 }
-
 
 //more complex with multiple free spaces => need to detail adjacency stuff
 function placeInFreeSpace(rect, freeSpace, coords) {

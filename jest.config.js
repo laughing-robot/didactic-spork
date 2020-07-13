@@ -1,9 +1,17 @@
+// jest.config.js
+// reference: https://kulshekhar.github.io/ts-jest/user/config/
+
+const { pathsToModuleNameMapper } = require('ts-jest/utils');
+const { compilerOptions } = require('./tsconfig');
+
 module.exports = {
-  roots: ['<rootDir>/src'],
-  transform: {
-    '^.+\\.tsx?$': 'ts-jest',
+   globals: {
+    'ts-jest': {
+      tsConfig: 'tsconfig.json'
+    }
   },
-  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
+  preset: 'ts-jest/presets/js-with-ts',
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' + compilerOptions.rootDir}),
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 }
 
