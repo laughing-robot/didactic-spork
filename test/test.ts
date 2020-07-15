@@ -1,4 +1,6 @@
 import { EdgeList } from "~packing/edgeList";
+import { Rect, Bin, FreeSpace, constructBin } from "~packing/bin"
+import { packIt } from "~packing/strippacker"
 
 describe('test edge list', () => {
 
@@ -12,10 +14,23 @@ describe('test edge list', () => {
         expect(mlist.ids.length).toBe(200);
     });
 
+    /**
+     * Bin: 20 by 10 
+     *
+     */
+    test('simple placements', () => {
+        let mbin : Bin = constructBin(20, 10);
+
+        //create some rectangles
+        let rect1 : Rect = {id: 0, w: 3, h: 5, placed: false};
+        let rect2 : Rect = {id:1, w: 4, h: 4, placed: false};
+        let rect3 : Rect = {id: 2, w: 2, h:5, placed: false};
+
+        packIt([rect1, rect2, rect3], [mbin]);
+
+        console.log(mbin.placed);
+        
+    });
+
 });
 
-describe('test basic strip packing', () => {
-    test('pack nothing', () => {
-        expect(2 + 2).toBe(4);
-    });
-});

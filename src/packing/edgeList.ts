@@ -1,16 +1,5 @@
 import { Bin, FreeSpace, FreeSpaceDict } from "~packing/bin"
-// bin interface
-// w : int
-// h : int
-// freeSpaces: EdgeList()
 
-//freeSpace interface
-//x0
-//y0
-//width
-//height
-//adj: {l:[], r:[], a:[], b:[]}
-//
 export class EdgeList {
 
     //variables
@@ -25,13 +14,13 @@ export class EdgeList {
          this.freeSpaces = {};
     };
 
-    pushList(spaces) {
+    pushList(spaces) : void {
         Object.keys(spaces).map(function(key, index) {
             this.push(spaces[key]);
         });
     }
 
-    push(space) {
+    push(space) : void {
         if (this.size() > this.maxSize) {
             throw "Fatal error exceeded maxSize";
         }
@@ -40,24 +29,29 @@ export class EdgeList {
         this.freeSpaces[space.id] = space;
     }
 
-    remove(id) {
+    remove(id) : void {
         delete this.freeSpaces[id];
         this.ids.push(id);
     }
 
-    size(){
+    size() : number {
         return Object.keys(this.freeSpaces).length;
+    }
+
+    get() : FreeSpaceDict {
+        return this.freeSpaces;
     }
 
     //checks all spaces in spacesB against each space in spacesA
     //updates the adjacency list accordingly
     //edge list uses ids (hashmap)
-    updateAdjacency(spaceIds : Array<number>, spacesB : Array<FreeSpace>) {
+    updateAdjacency(spaceIds : Array<number>, spacesB : Array<FreeSpace>) : void {
 
-        spaceIds.forEach(function (spaceId, i) {
-            let spaceA = this.freeSpaces[spaceId];
+        spaceIds.forEach(function (spaceId : number, i) {
 
-            spacesB.forEach(function (spaceB, j) {
+            let spaceA : FreeSpace = this.freeSpaces[spaceId];
+
+            spacesB.forEach(function (spaceB : FreeSpace, j) {
 
                 //skip null spaces
                 if (spaceB == null) {
@@ -95,7 +89,7 @@ export class EdgeList {
                 }
 
             });
-        });
+        }, this); //pass context
     };
 
 };
