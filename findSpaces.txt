@@ -1,0 +1,62 @@
+    // required to try this if x overlap
+    // find all limiters for growth in the direction
+    // if there are right & left limiters (need corresponding right and left adjacents)
+    // NEED TO ALSO CHECK THE FRONTIER FOR LEFT AND RIGHT => CONSTRUCT MINIMUM FRONTIER (find min x0 and xe) => determine if a shrink is legal
+    // if there are no limiters and we are adding a new block => may result in a shrink => need to check that shrink is legal => if no shrink (all good)
+    // [other idea: maintain a minimum rectangle? see if minimum rectangle is violated]
+    // update the minimum rectangle y0 to the new ye of the block
+    // TODO: ABSTRACT AWAY THE DIRECTION
+    createNewMaxRect(maxRect : PlacedRect, newSpace : FreeSpace) {
+
+        let newMaxRect : PlacedRect = new PlacedRect({}).fromPlacedRect(maxRect);
+        let maxY0 : number = Number.INFINITY:
+        let possible : boolean = true;
+
+        let hasRightAdjacent : boolean = newSpace.r.some((id) => {return this.frontier.hasKey(id)});  //r,l => a,b && a,b => r,l
+        let hasLeftAdjacent : boolean = newSpace.l.some((id) => {return this.frontier.hasKey(id)});
+
+        let rightLimiter : boolean = false;
+        let leftLimiter : boolean = false;
+
+        //reduce maxRect size?
+        let keyFrontier : Array<number> = newFrontier.forEach((id, i) => {
+            let space : FreeSpace = this.bin.freeSpaces[id];
+
+            if(space.y0 < maxRect.y0) {   // future limiting factors as we grow the rectangle => (a => ye, b => y0, r => xe, l => x0)
+
+                if(space.xe <= newSpace.x0) { //a,b => xe, x0, r,l => ye, y0
+                    rightLimiter = true;
+                }
+                else if(space.x0 >= newSpace.xe) {
+                    leftLimiter = true;
+                }
+
+                maxY0 = Math.max(minY0, space.y0);
+            }
+            else if (space.y0 == maxRect.y0 && space.b.hasKey(newSpace.id)) { //make sure we can grow into newSpace from previous hard limiter
+                possible = false;
+            }
+
+        }, this);
+
+        if(!possible || !hasRightAdjacent && rightLimiter || !hasLeftAdjacent && leftLimiter) {
+            return null; //cannot place the newspace
+        }
+
+        newMaxRect.y0 = maxY0;
+
+        if(!rightLimiter && !leftLimiter) { // shrink possible
+            newMaxRect.x0 = newSpace.x0;
+            newMaxRect.xe = newSpace.xe;
+
+            //check if the new MaxRect contains the other rects or at least overlaps
+            if(!this.frontier.every((space) => {
+                return isOverlap(space);
+            })){
+                return null;
+            }
+        }
+
+        return newMaxRect;
+    }
+

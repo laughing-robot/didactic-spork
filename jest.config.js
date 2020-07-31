@@ -10,8 +10,10 @@ module.exports = {
       tsConfig: 'tsconfig.json'
     }
   },
+  // testEnvironment: 'node',
   preset: 'ts-jest/presets/js-with-ts',
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' + compilerOptions.rootDir}),
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  setupFilesAfterEnv: ['jest-expect-message']
 }
 

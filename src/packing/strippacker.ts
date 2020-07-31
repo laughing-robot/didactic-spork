@@ -1,22 +1,18 @@
 import { EdgeList } from "~packing/edgeList"
-import { FreeSpace, PlacedRect, Rect, Bin } from "~packing/bin"
+import { FreeSpace, PlacedRect, Rect, Bin, FreeSpaceDict } from "~packing/bin"
+import { SpaceAllocator, Proposal } from "~packing/spaceallocator"
 import PriorityQueue from 'js-priority-queue';
-
-// take in a bunch of posts
-// take in a bunch of surfaces or 'bins'
-// return coordinates on the surfaces
-// rectangles are sorted from thickest to thinest
-
 
 export function packIt(rectangles : Array<Rect>, bins : Array<Bin>) {
 
     let i, j;
 
+    let allocator = new SpaceAllocator({bin : null, rect : null});
+
     bins.sort(function(a : Bin, b : Bin) {return b.placed.length - a.placed.length});
                           
     let rects = new PriorityQueue({comparator: function(a,b) {return b.w - a.w},
                                     initialValues: rectangles});
-
 
     while (rects.length > 0) {
         let rect : Rect = rects.dequeue();
@@ -25,8 +21,7 @@ export function packIt(rectangles : Array<Rect>, bins : Array<Bin>) {
 
             let bin : Bin = bins[i];
 
-            if (place(bin, rect)) {
-                //swap bin and next bin
+            if (place(bin, rect, allocator)) {
                 adjustBin(bins, i);
                 rect.placed = true;
                 break;
@@ -36,45 +31,40 @@ export function packIt(rectangles : Array<Rect>, bins : Array<Bin>) {
     }
 }
 
-
-function place(bin : Bin, rect : Rect) : boolean {
+function place(bin : Bin, rect : Rect, allocator : SpaceAllocator) : boolean {
     let x = 0, y = 0;
 
+    allocator.setRect(rect);
+    allocator.setBin(bin);
+
     //construct a profile of the free space
-    for (const [ id, freeSpace ] of Object.entries(bin.freeSpaces.get())) {
-        if (freeSpace.w >= rect.w && freeSpace.h >= rect.h) {
+    let result : Proposal = allocator.getSpace();
 
-            console.log("FOUND A MATCH");
+    if(result == null || result.rect == null) {
+        return false;
+    }
 
-            //push the component on to be used on return
-            bin.placed.push({rect: rect, x0: freeSpace.x0, y0:freeSpace.y0});
+    let placedPhoto : PlacedRect = new PlacedRect({}).fromRect(rect); 
 
-            x = freeSpace.x0; y = freeSpace.y0;
+    //initializes x0, y0 of placedPhoto based on heuristics
+    selectPlacementLocation(placedPhoto, result.rect);
 
-            // (generated) break up free space
-            // contains some null spaces
-            let spaces = placeInFreeSpace(rect, freeSpace, {x: x, y: y});
+    for (const space of result.spaces) {
 
-            console.log(freeSpace);
-            console.log(rect);
-            console.log(spaces);
+        //push the component on to be used
+        bin.placed.push(placedPhoto);
 
-            // add the new spaces to bin.freeSpaces 
-            addSpaces(bin.freeSpaces, spaces);
+        let spaces = computeResultantFreeSpaces(placedPhoto, space);
 
-            // update edge list and adjacencies
-            bin.freeSpaces.updateAdjacency(freeSpace.l, [spaces.l, spaces.la, spaces.lb]);
-            bin.freeSpaces.updateAdjacency(freeSpace.r, [spaces.r, spaces.ra, spaces.rb]);
-            bin.freeSpaces.updateAdjacency(freeSpace.b, [spaces.b, spaces.rb, spaces.lb]);
-            bin.freeSpaces.updateAdjacency(freeSpace.a, [spaces.a, spaces.ra, spaces.rb]);
+        // add the new spaces to bin.freeSpaces, updates adjacencies
+        // TODO: make linking more efficient (move place into edgelist)
+        bin.freeSpaces.pushList(spaces);
 
-            bin.freeSpaces.remove(id);
+        // clean delete the id
+        bin.freeSpaces.remove(space.id);
+    }
 
-            return true;
-        }
-    };
-
-    return false;
+    return true;
 }
 
 
@@ -88,22 +78,36 @@ function addSpaces(freeSpaces, freeSpaceCandidates) {
 
 }
 
-//more complex with multiple free spaces => need to detail adjacency stuff
-function placeInFreeSpace(rect, freeSpace, coords) {
 
+function selectPlacementLocation(placedPhoto : PlacedRect, maxRect : PlacedRect) {
+    //simply choose bottom left
+    placedPhoto.setX(maxRect.x0);
+    placedPhoto.setY(maxRect.y0);
+
+    return placedPhoto;
+}
+
+
+// produces resultant rectangles from a placement
+function computeResultantFreeSpaces(placedPhoto : PlacedRect, freeSpace : FreeSpace) {
+
+    //compute actual part of thej rect in the freeSpace
+    //crop to the freeSpace
+    let placedRect : PlacedRect = cropTo(placedPhoto, freeSpace);
+    
     //assume that the coordinates '(0,0)' starts bottom left
 
     //right square
-    let freeSpaceR = new FreeSpace({x0: coords.x + rect.w, y0: coords.y, w: freeSpace.x0 + freeSpace.w - (coords.x + rect.w), h: rect.h});
+    let freeSpaceR = new FreeSpace({x0: placedRect.xe, y0: placedRect.y0, w: freeSpace.x0 + freeSpace.w - (placedRect.xe), h:placedRect.h});
 
     //above square
-    let freeSpaceA = new FreeSpace({x0: coords.x, y0: coords.y + rect.h, w: rect.w, h: freeSpace.y0 + freeSpace.h - (coords.y + rect.h)});
+    let freeSpaceA = new FreeSpace({x0: placedRect.x0, y0: placedRect.ye, w:placedRect.w, h: freeSpace.y0 + freeSpace.h - (placedRect.ye)});
 
     //left square
-    let freeSpaceL = new FreeSpace({x0: freeSpace.x0, y0: coords.y, w: coords.x - freeSpace.x0, h: rect.h});
+    let freeSpaceL = new FreeSpace({x0: freeSpace.x0, y0: placedRect.y0, w: placedRect.x0 - freeSpace.x0, h: placedRect.h});
 
     //below square
-    let freeSpaceB = new FreeSpace({x0: coords.x, y0: freeSpace.y0, w: rect.w, h: coords.y - freeSpace.y0});
+    let freeSpaceB = new FreeSpace({x0: placedRect.x0, y0: freeSpace.y0, w:placedRect.w, h: placedRect.y0 - freeSpace.y0});
 
     //left, above square
     let freeSpaceLA = new FreeSpace({x0: freeSpaceL.x0, y0: freeSpaceA.y0, w: freeSpaceL.w, h: freeSpaceA.h});
@@ -138,6 +142,17 @@ function vet(spaces) {
     return spaces;
 };
 
+function cropTo(placedRect : PlacedRect, freeSpace : FreeSpace) : PlacedRect {
+    let newRect : PlacedRect = new PlacedRect({}).fromRect(placedRect);
+
+    newRect.setX(freeSpace.x0 * Number(placedRect.x0 < freeSpace.x0) + placedRect.x0 * Number(placedRect.x0 >= freeSpace.x0));
+    newRect.setY(freeSpace.y0 * Number(placedRect.y0 < freeSpace.y0) + placedRect.y0 * Number(placedRect.y0 > freeSpace.y0));
+    newRect.setW(Math.min(placedRect.w - (newRect.x0 - placedRect.x0), freeSpace.xe - newRect.x0));   
+    newRect.setH(Math.min(placedRect.h - (newRect.y0 - placedRect.y0), freeSpace.ye - newRect.y0));   
+
+    return newRect;
+}
+
 
 function adjustBin(bins : Array<Bin>, binNum : number) : void {
     let i = binNum + 1;
@@ -147,11 +162,12 @@ function adjustBin(bins : Array<Bin>, binNum : number) : void {
         i = i + 1;
     }
 
-    if (i >= bins.length) {
+    if (i > bins.length) {
         return;
     }
 
     //swap i and binNum
-    [bins[binNum], bins[i]] = [bins[i], bins[binNum]];
+    [bins[binNum], bins[i - 1]] = [bins[i - 1], bins[binNum]];
+
 }
 

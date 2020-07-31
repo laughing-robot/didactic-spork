@@ -3,3 +3,34 @@
 2) we can just pass in x items and have the room display them
 3) need a nice format to pass in the reddit portraits
 4) need a way to track player location and generate rooms
+
+
+
+
+PACKING RANDOMIZATION
+1) top-level stuff (bins, sub-bins, etc.)
+2) portrait sizes and scalings
+3) portrait placements space
+
+iterable placements w/ intuitive rescalings maybe?
+which bin? => definitely needs some RANDOM
+
+which free space? => this can be deterministic?
+
+how to make placements 'iterable'
+    o have to be able to 'undo' a placement
+
+which free space to start at
+how to search from a seed point
+
+how to 'jump' to a totally different placement style?
+i.e. how to randomly sample placement styles
+
+
+
+STATE SPACE
+
+STATE (example)
+bins, bin style, portrait placements, unplaced portraits
+some heuristic
+priority queue

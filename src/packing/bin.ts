@@ -1,4 +1,6 @@
-import { EdgeList } from "~/packing/edgeList"
+import { EdgeList } from "~packing/edgeList"
+import { Direction } from "~packing/directions"
+import PriorityQueue from 'js-priority-queue';
 
 export interface Rect {
     id: number,
@@ -7,61 +9,200 @@ export interface Rect {
     placed: boolean 
 }
 
-export interface PlacedRect {
-    rect: Rect,
-    x0: number,
+export class PlacedRect implements Rect {
+    id: number
+    w: number
+    h: number
+    x0: number
     y0: number
-}
+    ye: number
+    xe: number
+    placed: boolean
 
-export interface Bin {
-    freeSpaces: EdgeList;
-    placed: Array<PlacedRect>;
-}
 
-export class FreeSpace {
-    id: number;
-    x0: number;
-    y0: number;
-    w: number;
-    h: number;
-    a: Array<number>; 
-    b: Array<number>;
-    l: Array<number>;
-    r: Array<number>;
-
-    constructor({id = null, x0, y0, w, h, a = [], b = [], l = [], r = []}) {
-        this.id = id;
+    constructor({id = null, x0 = 0, y0 = 0, w = 0, h = 0, placed = false}) {
         this.x0 = x0;
         this.y0 = y0;
         this.w = w;
         this.h = h;
+        this.id = id;
+        this.placed = placed;
+
+        this.update();
+    }
+
+    toString() {
+        return "x0: " + this.x0 + ", y0: " + this.y0 + ", w: " + this.w + ", h: " + this.h;
+    }
+
+    fromRect(rect : Rect) : PlacedRect {
+        this.w = rect.w;
+        this.h = rect.h;
+        this.placed = rect.placed;
+        this.update();
+
+        return this;
+    }
+
+    fromPlacedRect(placedRect : PlacedRect) : PlacedRect {
+        this.w = placedRect.w;
+        this.h = placedRect.h;
+        this.x0 = placedRect.x0;
+        this.y0 = placedRect.y0;
+
+        this.update();
+
+        return this;
+    }
+
+    fromFreeSpace(freeSpace : FreeSpace) : PlacedRect {
+
+        this.w = freeSpace.w;
+        this.h = freeSpace.h;
+        this.x0 = freeSpace.x0;
+        this.y0 = freeSpace.y0;
+
+        this.update();
+
+        return this;
+    }
+
+    setX(x : number) {
+        this.x0 = x;
+        this.update();
+    }
+
+    setY(y : number) {
+        this.y0 = y;
+        this.update();
+    }
+
+    setH(h : number) {
+        this.h = h;
+        this.update();
+    }
+
+    setW(w : number) {
+        this.w = w;
+        this.update();
+    }
+
+
+    update() : void {
+        this.xe = this.x0 + this.w;
+        this.ye = this.y0 + this.h;
+    }
+
+    getLim(dir : Direction) : number {
+        switch(dir) {
+            case Direction.Above:
+                return this.ye;
+            case Direction.Below:
+                return this.y0;
+            case Direction.Left:
+                return this.x0;
+            case Direction.Right:
+                return this.xe;
+        }
+
+
+        throw "Invalid direction";
+    }
+
+    setLim(dir : Direction, val : number) {
+        switch(dir) {
+            case Direction.Above:
+                this.ye = val;
+                break;
+            case Direction.Below:
+                this.y0 = val;
+                break;
+            case Direction.Left:
+                this.x0 = val;
+                break;
+            case Direction.Right:
+                this.xe = val;
+                break;
+        }
+
+        this.update();
+    }
+}
+
+export class Bin {
+
+    w: number;
+    h: number;
+    freeSpaces: EdgeList;
+    placed: Array<PlacedRect>;
+    cached_proposals: Array<Object>;
+
+    constructor({w, h, freeSpaces = new EdgeList(), placed = []}) {
+        this.w = w;
+        this.h = h;
+        this.freeSpaces = freeSpaces;
+        this.placed = placed;
+        this.cached_proposals = [];
+
+        if(this.freeSpaces.size() == 0) { //initialize the block
+            this.freeSpaces.push(new FreeSpace({x0: 0, y0: 0, w: this.w, h: this.h}));
+        }
+    }
+
+    acceptProposals(proposal_list) {
+                
+    }
+
+    purgeProposals() {
+        //iterate through the cache_proposals
+        //remove defunct proposals
+        // for (const [key] in Object.keys(cached_proposals)) {
+        //     console.log(key);
+        // }
+        
+    }
+
+}
+
+export class FreeSpace extends PlacedRect {
+    id: number;
+    x0: number;
+    y0: number;
+    xe: number;
+    ye: number;
+    w: number;
+    h: number;
+    a: Set<number>; 
+    b: Set<number>;
+    l: Set<number>;
+    r: Set<number>;
+    adj: Array<Set<number>>;
+
+    constructor({id = null, x0, y0, w, h, a = [], b = [], l = [], r = []}) {
+        super({id: id, x0: x0, y0: y0, w: w, h: h});
 
         //initializing lists
-        this.a = a;
-        this.b = b;
-        this.l = l;
-        this.r = r;
+        this.a = new Set(a);
+        this.b = new Set(b);
+        this.l = new Set(l);
+        this.r = new Set(r);
+        this.adj = [this.a, this.b, this.l, this.r];
     }
+
+    getNeighbors() : Set<number> {
+        return new Set([...this.a, ...this.b, ...this.l, ...this.r]);
+    }
+
+    remove(id) {
+        this.adj.forEach((mset, i) => {
+            mset.delete(id);
+        });
+    }
+
 }
 
 export interface FreeSpaceDict {
     [spaceId: number] : FreeSpace;
 }
 
-export function constructBin(w : number, h: number) : Bin {
-
-    let mbin : Bin = {freeSpaces: new EdgeList(), placed: []};
-
-    let space : FreeSpace = new FreeSpace({
-        id: null,
-        x0: 0,
-        y0: 0,
-        w: w,
-        h: h
-    });
-
-    mbin.freeSpaces.push(space);
-
-    return mbin; 
-}
 
