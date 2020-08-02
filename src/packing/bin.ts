@@ -1,6 +1,6 @@
 import { EdgeList } from "~packing/edgeList"
 import { Direction } from "~packing/directions"
-import PriorityQueue from 'js-priority-queue';
+import PriorityQueue from "js-priority-queue";
 
 export interface Rect {
     id: number,
@@ -10,6 +10,7 @@ export interface Rect {
 }
 
 export class PlacedRect implements Rect {
+
     id: number
     w: number
     h: number
@@ -39,6 +40,7 @@ export class PlacedRect implements Rect {
         this.w = rect.w;
         this.h = rect.h;
         this.placed = rect.placed;
+
         this.update();
 
         return this;
@@ -69,21 +71,25 @@ export class PlacedRect implements Rect {
 
     setX(x : number) {
         this.x0 = x;
+
         this.update();
     }
 
     setY(y : number) {
         this.y0 = y;
+
         this.update();
     }
 
     setH(h : number) {
         this.h = h;
+
         this.update();
     }
 
     setW(w : number) {
         this.w = w;
+
         this.update();
     }
 

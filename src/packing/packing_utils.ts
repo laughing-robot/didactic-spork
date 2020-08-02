@@ -42,10 +42,10 @@ export function retrieveOverlap(rect1 : PlacedRect, rect2 : PlacedRect) : Overla
 
 export function isOverlap(prect1 : PlacedRect, prect2 : PlacedRect) : boolean {
 
-    if (prect1.x0 >= prect2.xe || prect1.xe <= prect2.x0) { //to the left
+    if ( prect1.x0 >= prect2.xe || prect1.xe <= prect2.x0) { //to the left
         return false;
     }
-    else if(prect1.y0 >= prect2.ye || prect1.ye <= prect2.y0 ) { //to the top
+    else if( prect1.y0 >= prect2.ye || prect1.ye <= prect2.y0 ) { //to the top
         return false;
     }
 

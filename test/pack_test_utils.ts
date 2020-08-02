@@ -15,14 +15,16 @@ function noOverlap(mbins: Array<Bin>) : boolean {
     return mbins.every((bin: Bin) => {
         let placed = bin.placed;
 
+
         for(let i = 0; i < placed.length - 1; ++i) {
             for(let j = i+1; j < placed.length; ++j) {
-                return !isOverlap(placed[i], placed[j]);
+                if(isOverlap(placed[i], placed[j])) {
+                    return false;
+                }
             }
         }
 
         return true;
-
     });
 }
 
@@ -35,7 +37,6 @@ function inBounds(mbins : Array<Bin>) : boolean  {
             }
 
             return true;
-
         });
     })
 }

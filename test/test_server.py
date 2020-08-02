@@ -63,13 +63,13 @@ class MyServer(BaseHTTPRequestHandler):
                 #plt.gca().autoscale()
 
                 for rect in mbin['placed']:
-                    w, h, x0, y0 = rect['w'], rect['h'], rect['x0'], rect['y0']
+                    w, h, x0, y0, xe, ye = rect['w'], rect['h'], rect['x0'], rect['y0'], rect['xe'], rect['ye']
                     rectangle = plt.Rectangle((x0, y0), w, h, fc='green', ec='black')
 
                     #print("{} {} {} {}".format(w, h, x0, y0))
                     plt.gca().add_patch(rectangle)
 
-                    txt += "id: {} w: {} h: {} x0: {} y0: {}\n".format(rect['id'], w, h, x0, y0);
+                    txt += "id: {} w: {} h: {} x0: {} y0: {} xe: {} ye: {}\n".format(rect['id'], w, h, x0, y0, xe, ye);
 
                 plt.title('Bin ' + key)
                 plt.figtext(0.5, 0.000, txt, wrap=True, horizontalalignment='center', fontsize=5)

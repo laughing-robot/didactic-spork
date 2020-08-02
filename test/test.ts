@@ -40,11 +40,11 @@ describe('test edge list', () => {
 
         packIt([rect1, rect2, rect3], [mbin]);
 
+        //visualize
+        await recordResults([mbin], 'simple_placements')
+
         //send to endpoint to be saved
         verifyPacking([mbin]);
-
-        await recordResults([mbin], 'simple_placements')
-        
     });
 
     test('complex placements', async () => {
@@ -54,8 +54,10 @@ describe('test edge list', () => {
         let rects : Array<Rect>  = constructRects(rectDims)
         let bins : Array<Bin> = constructBins(binDims)
 
+
         packIt(rects, bins);
 
+        //visualize
         await recordResults(bins, 'complex_placements');
 
         verifyPacking(bins);
@@ -70,13 +72,28 @@ describe('test edge list', () => {
 
         packIt(rects, [mbin]);
 
-        //send to endpoint to be saved
+        //visualize
+        await recordResults([mbin], 'tight_placements')
+
         verifyPacking([mbin]);
 
-        await recordResults([mbin], 'tight_placements')
-        
-
     });
+
+    test('allocation placements', async() => {
+        let mbin : Bin = new Bin({w: 10, h: 7});
+
+        let rectDims = [ [5, 3], [5,3], [5,3], [5,2], [5,1], [5,1], [2.5, 1], [2.5, 1] ]; 
+
+        let rects : Array<Rect>  = constructRects(rectDims)
+
+        packIt(rects, [mbin]);
+
+        //visualize
+        await recordResults([mbin], 'tight_placements')
+
+        verifyPacking([mbin]);
+    });
+
 });
 
 
