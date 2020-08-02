@@ -77,8 +77,8 @@ export class SpaceAllocator {
     //TODO: there is an issue when we have 4 blocks at right angles + => potential solution is to maintain 2 maxRects and combine if possible
     findSpaces(maxRect : PlacedRect) : PlacedRect {
 
-        console.log(" MAX RECT " + maxRect.toString());
-        console.log(" SPACES " + this.frontier);
+        // console.log(" MAX RECT " + maxRect.toString());
+        // console.log(" SPACES " + this.frontier);
 
         let undo : Array<FreeSpace> = []; //stores details on how to undo the current iteration's loop
 

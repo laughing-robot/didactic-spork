@@ -61,6 +61,22 @@ describe('test edge list', () => {
         verifyPacking(bins);
     });
 
+    test('tight placements', async() => {
+        let mbin : Bin = new Bin({w: 10, h: 7});
+
+        let rectDims = [ [5, 3], [5,3], [5,3], [5,2], [5,1], [5,1], [2.5, 1], [2.5, 1] ]; 
+
+        let rects : Array<Rect>  = constructRects(rectDims)
+
+        packIt(rects, [mbin]);
+
+        //send to endpoint to be saved
+        verifyPacking([mbin]);
+
+        await recordResults([mbin], 'tight_placements')
+        
+
+    });
 });
 
 

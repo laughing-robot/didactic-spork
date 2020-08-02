@@ -32,7 +32,7 @@ export class PlacedRect implements Rect {
     }
 
     toString() {
-        return "x0: " + this.x0 + ", y0: " + this.y0 + ", w: " + this.w + ", h: " + this.h;
+        return "id: " + this.id + " x0: " + this.x0 + ", y0: " + this.y0 + ", w: " + this.w + ", h: " + this.h;
     }
 
     fromRect(rect : Rect) : PlacedRect {

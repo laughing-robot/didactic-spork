@@ -2,6 +2,7 @@ import { EdgeList } from "~packing/edgeList"
 import { FreeSpace, PlacedRect, Rect, Bin, FreeSpaceDict } from "~packing/bin"
 import { SpaceAllocator, Proposal } from "~packing/spaceallocator"
 import PriorityQueue from 'js-priority-queue';
+import { log } from "~/../test/logging.ts";
 
 export function packIt(rectangles : Array<Rect>, bins : Array<Bin>) {
 
@@ -11,7 +12,7 @@ export function packIt(rectangles : Array<Rect>, bins : Array<Bin>) {
 
     bins.sort(function(a : Bin, b : Bin) {return b.placed.length - a.placed.length});
                           
-    let rects = new PriorityQueue({comparator: function(a,b) {return b.w - a.w},
+    let rects = new PriorityQueue({comparator: function(a,b) {return Math.pow(b.w, 1.1)*b.h - Math.pow(a.w, 1.1)*a.h},
                                     initialValues: rectangles});
 
     while (rects.length > 0) {
@@ -39,6 +40,9 @@ function place(bin : Bin, rect : Rect, allocator : SpaceAllocator) : boolean {
 
     //construct a profile of the free space
     let result : Proposal = allocator.getSpace();
+
+    //log the proposal
+    log(result, 'Proposal');
 
     if(result == null || result.rect == null) {
         return false;
@@ -89,6 +93,7 @@ function selectPlacementLocation(placedPhoto : PlacedRect, maxRect : PlacedRect)
 
 
 // produces resultant rectangles from a placement
+// TODO: CHECK THIS
 function computeResultantFreeSpaces(placedPhoto : PlacedRect, freeSpace : FreeSpace) {
 
     //compute actual part of thej rect in the freeSpace
@@ -98,10 +103,10 @@ function computeResultantFreeSpaces(placedPhoto : PlacedRect, freeSpace : FreeSp
     //assume that the coordinates '(0,0)' starts bottom left
 
     //right square
-    let freeSpaceR = new FreeSpace({x0: placedRect.xe, y0: placedRect.y0, w: freeSpace.x0 + freeSpace.w - (placedRect.xe), h:placedRect.h});
+    let freeSpaceR = new FreeSpace({x0: placedRect.xe, y0: placedRect.y0, w: freeSpace.xe - placedRect.xe, h: placedRect.h});
 
     //above square
-    let freeSpaceA = new FreeSpace({x0: placedRect.x0, y0: placedRect.ye, w:placedRect.w, h: freeSpace.y0 + freeSpace.h - (placedRect.ye)});
+    let freeSpaceA = new FreeSpace({x0: placedRect.x0, y0: placedRect.ye, w: placedRect.w, h: freeSpace.ye - placedRect.ye});
 
     //left square
     let freeSpaceL = new FreeSpace({x0: freeSpace.x0, y0: placedRect.y0, w: placedRect.x0 - freeSpace.x0, h: placedRect.h});
@@ -146,7 +151,7 @@ function cropTo(placedRect : PlacedRect, freeSpace : FreeSpace) : PlacedRect {
     let newRect : PlacedRect = new PlacedRect({}).fromRect(placedRect);
 
     newRect.setX(freeSpace.x0 * Number(placedRect.x0 < freeSpace.x0) + placedRect.x0 * Number(placedRect.x0 >= freeSpace.x0));
-    newRect.setY(freeSpace.y0 * Number(placedRect.y0 < freeSpace.y0) + placedRect.y0 * Number(placedRect.y0 > freeSpace.y0));
+    newRect.setY(freeSpace.y0 * Number(placedRect.y0 < freeSpace.y0) + placedRect.y0 * Number(placedRect.y0 >= freeSpace.y0));
     newRect.setW(Math.min(placedRect.w - (newRect.x0 - placedRect.x0), freeSpace.xe - newRect.x0));   
     newRect.setH(Math.min(placedRect.h - (newRect.y0 - placedRect.y0), freeSpace.ye - newRect.y0));   
 
