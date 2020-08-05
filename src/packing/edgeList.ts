@@ -1,4 +1,5 @@
 import { Bin, FreeSpace, FreeSpaceDict } from "~packing/bin"
+import { jsonify } from "~utils"
 
 export class EdgeList {
 
@@ -14,12 +15,17 @@ export class EdgeList {
          this.freeSpaces = {};
     };
 
+    getString() : string {
+        return jsonify({freeSpaces : this.freeSpaces}, 0);
+    }
+
     pushList(spaces) : void {
         Object.keys(spaces).map((key, index) => {
             this.push(spaces[key]);
         }, this);
     }
 
+    //TODO: add a 2D interval tree to check for adjacency (for linking)
     push(space) : void {
 
         if(space == null) {

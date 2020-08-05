@@ -1,6 +1,7 @@
 import { EdgeList } from "~packing/edgeList"
 import { Direction } from "~packing/directions"
-import PriorityQueue from "js-priority-queue";
+import { jsonify } from "~utils"
+import PriorityQueue from "js-priority-queue"
 
 export interface Rect {
     id: number,
@@ -32,8 +33,8 @@ export class PlacedRect implements Rect {
         this.update();
     }
 
-    toString() {
-        return "id: " + this.id + " x0: " + this.x0 + ", y0: " + this.y0 + ", w: " + this.w + ", h: " + this.h;
+    getString() {
+        return jsonify({id: this.id, x0: this.x0, y0: this.y0, xe: this.xe, ye: this.ye, w: this.w, h: this.h}, 0);
     }
 
     fromRect(rect : Rect) : PlacedRect {
@@ -194,6 +195,7 @@ export class FreeSpace extends PlacedRect {
         this.r = new Set(r);
         this.adj = [this.a, this.b, this.l, this.r];
     }
+
 
     getNeighbors() : Set<number> {
         return new Set([...this.a, ...this.b, ...this.l, ...this.r]);

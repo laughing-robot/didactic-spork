@@ -50,6 +50,10 @@ class MyServer(BaseHTTPRequestHandler):
             txt = "Rectangles\n";
 
             for key, sbin in post_body.items():
+
+                if 'spaces' in key:
+                    continue;
+
                 mbin = json.loads(sbin)
                 binw, binh = mbin['w'], mbin['h']
 
@@ -62,9 +66,21 @@ class MyServer(BaseHTTPRequestHandler):
                 plt.gca().add_patch(bigrect)
                 #plt.gca().autoscale()
 
+                # add rectangles
+
+                for rid, rect in mbin['freeSpaces']['freeSpaces'].items():
+
+                    if rid == 'undefined': # no free spaces
+                        break;
+
+                    w, h, x0, y0, xe, ye = rect['w'], rect['h'], rect['x0'], rect['y0'], rect['xe'], rect['ye']
+                    rectangle = plt.Rectangle((x0, y0), w, h, fc='lavenderblush', ec='black')
+                    plt.gca().add_patch(rectangle)
+
+
                 for rect in mbin['placed']:
                     w, h, x0, y0, xe, ye = rect['w'], rect['h'], rect['x0'], rect['y0'], rect['xe'], rect['ye']
-                    rectangle = plt.Rectangle((x0, y0), w, h, fc='green', ec='black')
+                    rectangle = plt.Rectangle((x0, y0), w, h, fc='cornflowerblue', ec='red')
 
                     #print("{} {} {} {}".format(w, h, x0, y0))
                     plt.gca().add_patch(rectangle)

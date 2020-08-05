@@ -59,4 +59,3 @@ function areUnique(mbins : Array<Bin>) : boolean {
         }
     );
 }
-

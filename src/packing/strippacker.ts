@@ -33,6 +33,7 @@ export function packIt(rectangles : Array<Rect>, bins : Array<Bin>) {
 }
 
 function place(bin : Bin, rect : Rect, allocator : SpaceAllocator) : boolean {
+
     let x = 0, y = 0;
 
     allocator.setRect(rect);
@@ -41,10 +42,9 @@ function place(bin : Bin, rect : Rect, allocator : SpaceAllocator) : boolean {
     //construct a profile of the free space
     let result : Proposal = allocator.getSpace();
 
-    //log the proposal
     log(result, 'Proposal');
 
-    if(result == null || result.rect == null) {
+    if (result == null || result.rect == null) {
         return false;
     }
 
