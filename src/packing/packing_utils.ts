@@ -6,11 +6,15 @@ export interface OverlapResponse {
     direction: Direction;
 }
 
+export function overlapDir(rect1: PlacedRect, rect2 : PlacedRect) : Direction {
+    return retrieveOverlap(rect1, rect2).direction;
+}
+
 //checks if two rectangles are adjacent and returns the line segment of the intersection (x1, y1) <-> (x2, y2)
 export function retrieveOverlap(rect1 : PlacedRect, rect2 : PlacedRect) : OverlapResponse {
 
-    let overlap : Array<Array<number>>;
-    let dir : Direction;
+    let overlap : Array<Array<number>> = null;
+    let dir : Direction = Direction.None;
 
     if( !(rect1.x0 >= rect1.xe || rect2.x0 >= rect1.xe) ) { // overlap along x
         if(rect1.y0 == rect2.ye) { // glued bottom to top
@@ -32,10 +36,6 @@ export function retrieveOverlap(rect1 : PlacedRect, rect2 : PlacedRect) : Overla
             dir = Direction.Right;
         }
     }
-    else {
-        return { overlap: null, direction: Direction.None };
-    } 
-
 
     return { overlap: overlap, direction: dir };
 }

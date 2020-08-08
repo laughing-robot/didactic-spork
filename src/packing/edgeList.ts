@@ -42,7 +42,14 @@ export class EdgeList {
     }
 
     remove(id) : void {
-        this.freeSpaces[id].remove(id);
+        let space : FreeSpace = this.freeSpaces[id];
+
+        // remove from others adjacencies
+        // could be faster
+        for(const adjId of space.getNeighbors()) {
+            this.freeSpaces[adjId].remove(id);
+        }
+
         delete this.freeSpaces[id];
         this.ids.push(id);
     }
@@ -71,35 +78,25 @@ export class EdgeList {
             return;
         }
 
-        //above or below
-        if ((spaceA.x0 <= spaceB.x0 && spaceA.x0 >= spaceB.x0 + spaceB.w) || (spaceB.x0 <= spaceA.x0 && spaceB.x0 >= spaceA.x0 + spaceA.w)) {
-            if(spaceA.y0 + spaceA.h == spaceB.y0) {
-                //spaceA is below spaceB
-                spaceB.b.add(spaceA.id);
-                spaceA.a.add(spaceB.id);
-
-            }
-            else if(spaceB.y0 + spaceB.h == spaceA.y0) {
-                //spaceB is below spaceA
-                spaceB.a.add(spaceA.id);
-                spaceA.b.add(spaceB.id);
-            }
-
-        }
-        else if ((spaceA.y0 <= spaceB.y0 && spaceA.y0 >= spaceB.y0 + spaceB.h) || (spaceB.y0 <= spaceA.y0 && spaceB.y0 >= spaceA.y0 + spaceA.h)) {
-            if(spaceA.x0 + spaceA.w == spaceB.x0) {
-                //spaceA is left of spaceB
-                spaceB.l.add(spaceA.id);
-                spaceA.r.add(spaceB.id);
-
-            }
-            else if(spaceB.x0 + spaceB.w == spaceA.x0) {
-                //spaceA is left of spaceB
-                spaceB.r.add(spaceA.id);
+        if (spaceA.y0 < spaceB.ye || spaceB.y0 < spaceA.ye) {
+            if(spaceA.x0 == spaceB.xe) {
                 spaceA.l.add(spaceB.id);
+                spaceB.r.add(spaceA.id);
             }
-
+            else if(spaceA.xe == spaceB.x0) {
+                spaceA.r.add(spaceB.id);
+                spaceB.l.add(spaceA.id);
+            }
+        }
+        else if(spaceA.x0 < spaceB.xe || spaceB.x0 < spaceA.xe) {
+            if (spaceA.y0 == spaceB.ye) {
+                spaceA.b.add(spaceB.id);
+                spaceB.a.add(spaceA.id);
+            }
+            else if(spaceA.ye == spaceB.y0) {
+                spaceA.a.add(spaceB.id);
+                spaceB.b.add(spaceA.id);
+            }
         }
     }
-
 };

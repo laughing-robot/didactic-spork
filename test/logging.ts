@@ -5,14 +5,15 @@ export function log(obj : object, mtype : string = 'class') {
     let str = "no message";
 
     if (obj == null) {
-        console.log("log: null");
+        console.log(mtype + ", log: null");
         return;
     }
 
     switch(mtype) {
             case 'Proposal':
-                str = logProposal(obj as Proposal)
+                str = 'Proposal\n' + logProposal(obj as Proposal)
                 break;
+                
     }
 
     console.log(str);

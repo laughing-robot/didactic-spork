@@ -56,8 +56,8 @@ describe('test edge list', () => {
         let rectDims = [ [3, 3], [5, 2], [6,6.75], [2,10], [3,3], [2.5, 4], [6, 13], [2.25, 2], [1.21, 3], [5.42, 3], [3, 4.23], [5, 4], [4, 11], [2, 6.23], [4, 4], [1.2, 1.2], [1.2, 1.2] ];
         let binDims = [[20, 10], [5, 10], [5, 10], [15, 10], [20, 10], [10, 10], [5, 10], [10, 5]];
 
-        let rects : Array<Rect>  = constructRects(rectDims)
-        let bins : Array<Bin> = constructBins(binDims, [])
+        let rects : Array<Rect>  = constructRects(rectDims);
+        let bins : Array<Bin> = constructBins(binDims, []);
 
 
         packIt(rects, bins);
@@ -104,7 +104,6 @@ describe('rigorous allocation test', () => {
 
         packIt(rects, bins);
 
-        //visualize
         await recordResults(bins, 'hanging_packing');
 
         verifyPacking(bins);

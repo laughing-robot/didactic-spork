@@ -132,7 +132,8 @@ export class PlacedRect implements Rect {
                 break;
         }
 
-        this.update();
+        this.w = this.xe - this.x0;
+        this.h = this.ye - this.y0;
     }
 }
 
@@ -193,18 +194,20 @@ export class FreeSpace extends PlacedRect {
         this.b = new Set(b);
         this.l = new Set(l);
         this.r = new Set(r);
-        this.adj = [this.a, this.b, this.l, this.r];
+        this.adj = [this.a, this.b, this.r, this.l]; //must be kept consistent with directions
     }
 
 
     getNeighbors() : Set<number> {
-        return new Set([...this.a, ...this.b, ...this.l, ...this.r]);
+        return new Set([...this.a, ...this.b, ...this.r, ...this.l]);
     }
 
-    remove(id) {
-        this.adj.forEach((mset, i) => {
-            mset.delete(id);
-        });
+    remove(id) : void {
+        if(!this.adj.some((mset) => {
+            return mset.delete(id);
+        })) {
+            throw "Unable to remove id";
+        }
     }
 
 }

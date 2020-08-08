@@ -44,7 +44,7 @@ function place(bin : Bin, rect : Rect, allocator : SpaceAllocator) : boolean {
 
     log(result, 'Proposal');
 
-    if (result == null || result.rect == null) {
+    if (result == null || result.rect == null) { // no valid spaces
         return false;
     }
 
@@ -52,11 +52,11 @@ function place(bin : Bin, rect : Rect, allocator : SpaceAllocator) : boolean {
 
     //initializes x0, y0 of placedPhoto based on heuristics
     selectPlacementLocation(placedPhoto, result.rect);
+    bin.placed.push(placedPhoto); //add the photo
 
     for (const space of result.spaces) {
 
         //push the component on to be used
-        bin.placed.push(placedPhoto);
 
         let spaces = computeResultantFreeSpaces(placedPhoto, space);
 
