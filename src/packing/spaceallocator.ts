@@ -48,8 +48,12 @@ export class SpaceAllocator {
             this.frontier.add(space.id); //prep
 
             //TODO: need to mark and remember here :)
+
+            console.log("SPACE: " + space.id)
+            console.log(space.getString())
             this.findSpaces(new PlacedRect({}).fromFreeSpace(space));
             this.frontier.clear(); //clear array
+            this.exploredSpaces.add(space.id);
         }
 
         let proposal : Proposal = this.cur_proposals.length > 0 ? this.cur_proposals.pop() : null;
@@ -86,6 +90,9 @@ export class SpaceAllocator {
             this.propose(maxRect, new Set(this.frontier)); //store a plausible solution
         }
 
+        console.log("max rect")
+        console.log(maxRect.getString())
+
         // iterate over right possibilities
         for(let key of this.frontier) {
             let curSpace : FreeSpace = this.bin.freeSpaces.get(key);
@@ -101,6 +108,9 @@ export class SpaceAllocator {
 
                 let space : FreeSpace = this.bin.freeSpaces.get(spaceId);
 
+                console.log("NEIGHBOR: " + space.id);
+                console.log(space.getString())
+
                 if (this.exploredSpaces.has(space.id) || this.frontier.has(space.id)) { // already explored or already contains
                     continue;
                 }
@@ -108,11 +118,15 @@ export class SpaceAllocator {
                 let newMaxRect : PlacedRect = this.computeAndCheckAdjacent(maxRect, space);
 
                 if(newMaxRect != null) {
+                    console.log("ADJACENT")
                     this.markAndRemember(space, undo); // only remember if successfully forms a rectangle as an explored space
                     this.frontier.add(spaceId); 
 
                     this.findSpaces(newMaxRect);    
                     this.frontier.delete(spaceId); 
+                }
+                else {
+                    
                 }
             }
         }
@@ -127,6 +141,7 @@ export class SpaceAllocator {
         let direction : Direction = overlapDir(maxRect, space);
 
         if(direction == Direction.None) {
+            console.log("NOT ADJACENT");
             return null;
         }
 
@@ -138,13 +153,6 @@ export class SpaceAllocator {
         return this.createNewMaxRect(maxRect, space, direction); 
     }
 
-    // required to try this if x overlap
-    // find all limiters for growth in the direction
-    // if there are right & left limiters (need corresponding right and left adjacents)
-    // NEED TO ALSO CHECK THE FRONTIER FOR LEFT AND RIGHT => CONSTRUCT MINIMUM FRONTIER (find min x0 and xe) => determine if a shrink is legal
-    // if there are no limiters and we are adding a new block => may result in a shrink => need to check that shrink is legal => if no shrink (all good)
-    // [other idea: maintain a minimum rectangle? see if minimum rectangle is violated]
-    // update the minimum rectangle y0 to the new ye of the block
     // TODO: ABSTRACT AWAY THE DIRECTION
     createNewMaxRect(maxRect : PlacedRect, newSpace : FreeSpace, dir : Direction) {
 
@@ -187,17 +195,17 @@ export class SpaceAllocator {
         }, this);
 
         if(!isNotHardLimited || !hasUpAdjacent && upLimiter || !hasLowAdjacent && lowLimiter) { 
-            console.log("Failed: " + !isNotHardLimited + hasUpAdjacent + upLimiter + hasLowAdjacent + lowLimiter)
+            // console.log("Failed: " + !isNotHardLimited + hasUpAdjacent + upLimiter + hasLowAdjacent + lowLimiter)
             return null; //cannot place the newspace
         }
 
-        console.log("MAX LIM: " + maxLim);
+        // console.log("MAX LIM: " + maxLim);
 
         newMaxRect.setLim(dir, maxLim); //grow to max possible limit
 
         //TODO: doesn't work because the capping rectangle needs to be bound => DOES THIS WORK?????
         if (!upLimiter && !lowLimiter) { // shrink possible
-            console.log(" SHRINK CASE ");
+            // console.log(" SHRINK CASE ");
             newMaxRect.setLim(lowDir, Math.max(newSpace.getLim(lowDir), maxRect.getLim(lowDir)));
             newMaxRect.setLim(upDir, Math.min(newSpace.getLim(upDir), maxRect.getLim(upDir)));
 
@@ -209,8 +217,8 @@ export class SpaceAllocator {
             }
         }
 
-        console.log("NEW RECT")
-        console.log(newMaxRect.getString())
+        // console.log("NEW RECT")
+        // console.log(newMaxRect.getString())
 
         
         return newMaxRect;
