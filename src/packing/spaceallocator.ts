@@ -20,6 +20,7 @@ export class SpaceAllocator {
     exploredSpaces : Set<number>;
     cur_proposals : Array<Proposal>;
     final_proposals : Array<Proposal>;
+    proposal_limit : number;
 
 
     constructor({bin, rect}) {
@@ -27,10 +28,8 @@ export class SpaceAllocator {
         this.bin = bin;
         this.frontier = new Set();
         this.exploredSpaces = new Set(); 
+        this.proposal_limit = 20;
         this.cur_proposals = []; //collection of free spaces and a max rect 
-        this.final_proposals = []; 
-        //TODO: sorted array of previously discovered => need to verify that those freeSpaces are unchanged 
-
     }
 
     setRect(rect : Rect) {
@@ -49,8 +48,8 @@ export class SpaceAllocator {
 
             //TODO: need to mark and remember here :)
 
-            console.log("SPACE: " + space.id)
-            console.log(space.getString())
+            // console.log("SPACE: " + space.id)
+            // console.log(space.getString())
             this.findSpaces(new PlacedRect({}).fromFreeSpace(space));
             this.frontier.clear(); //clear array
             this.exploredSpaces.add(space.id);
@@ -90,16 +89,13 @@ export class SpaceAllocator {
             this.propose(maxRect, new Set(this.frontier)); //store a plausible solution
         }
 
-        console.log("max rect")
-        console.log(maxRect.getString())
+        // console.log("max rect")
+        // console.log(maxRect.getString())
 
         // iterate over right possibilities
         for(let key of this.frontier) {
             let curSpace : FreeSpace = this.bin.freeSpaces.get(key);
 
-            // console.log(curSpace.getString())
-            // console.log(curSpace.adj[Direction.Right].size) // AN ISSUE WITH LINK
-            // console.log(curSpace.adj[Direction.Left].size) // AN ISSUE WITH LINK
 
             //iterate over all neighbors
             //TODO: inefficient memory allocation for the combine => getNeighbors sucks
@@ -108,8 +104,8 @@ export class SpaceAllocator {
 
                 let space : FreeSpace = this.bin.freeSpaces.get(spaceId);
 
-                console.log("NEIGHBOR: " + space.id);
-                console.log(space.getString())
+                // console.log("NEIGHBOR: " + space.id);
+                // console.log(space.getString())
 
                 if (this.exploredSpaces.has(space.id) || this.frontier.has(space.id)) { // already explored or already contains
                     continue;
@@ -118,7 +114,7 @@ export class SpaceAllocator {
                 let newMaxRect : PlacedRect = this.computeAndCheckAdjacent(maxRect, space);
 
                 if(newMaxRect != null) {
-                    console.log("ADJACENT")
+                    // console.log("ADJACENT")
                     this.markAndRemember(space, undo); // only remember if successfully forms a rectangle as an explored space
                     this.frontier.add(spaceId); 
 
@@ -144,11 +140,6 @@ export class SpaceAllocator {
             console.log("NOT ADJACENT");
             return null;
         }
-
-        console.log("MAX RECT")
-        console.log(maxRect.getString())
-        console.log(space.getString())
-        console.log("Direction: " + direction);
 
         return this.createNewMaxRect(maxRect, space, direction); 
     }

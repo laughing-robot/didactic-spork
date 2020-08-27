@@ -34,3 +34,9 @@ STATE (example)
 bins, bin style, portrait placements, unplaced portraits
 some heuristic
 priority queue
+
+
+
+HOW TO RANK SPACES
+------------------
+- cache open spaces =>

@@ -1,7 +1,7 @@
 import { EdgeList } from "~packing/edgeList";
 import { Rect, Bin, FreeSpace } from "~packing/bin"
 import { packIt } from "~packing/strippacker"
-import { verifyPacking } from "./pack_test_utils"
+import { verifyPacking, constructBins, constructRects } from "./pack_test_utils"
 import { jsonify } from "~utils"
 import axios from 'axios'
 
@@ -12,8 +12,6 @@ beforeAll(() => {
 afterAll(()=> {
     axios.post('http://localhost:8080', {'close': true});
 });
-
-
 
 describe('test edge list', () => {
 
@@ -200,16 +198,7 @@ function recordResults(binList : Array<Bin>, title : string = "nah" ) {
     let post_body = {"title": title}
 
     binList.forEach(function (bin, i) {
-
-        //hacky way
-        // let tmp = bin.freeSpaces;
-        // bin.freeSpaces = null;
-
-        // store the bin itself
         post_body[i] = jsonify(bin, 0); //JSON.stringify(bin);
-
-
-        //bin.freeSpaces = tmp;
     });
 
     console.log(post_body);
@@ -218,31 +207,3 @@ function recordResults(binList : Array<Bin>, title : string = "nah" ) {
 }
 
 
-function constructBins(bins : number[][], blockDims: number[][][]) : Array<Bin> {
-    let mbins : Array<Bin> = []; 
-
-    bins.forEach((dims : Array<number>, i : number) => {
-        //initialize freeblocks
-        let freeSpaceList = new EdgeList();
-        
-        if(i < blockDims.length) {
-            blockDims[i].forEach((dims : number[], blockNum : number) => {
-               freeSpaceList.push(new FreeSpace({x0: dims[0], y0: dims[1], w: dims[2], h: dims[3]}));
-            });
-        }
-
-        mbins.push(new Bin({w: dims[0], h: dims[1], freeSpaces: freeSpaceList}));
-    });
-
-    return mbins;
-}
-
-function constructRects(rects : Array<Array<number>>) : Array<Rect> {
-    let mrects : Array<Rect> = [];
-
-    rects.forEach((dims : Array<number>, i : number) => {
-        mrects.push({id: i, w: dims[0], h: dims[1], placed: false})
-    });
-
-    return mrects;
-}

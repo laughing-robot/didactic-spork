@@ -1,4 +1,5 @@
-import { Rect, Bin, PlacedRect } from "~packing/bin"
+import { Rect, Bin, PlacedRect, FreeSpace } from "~packing/bin"
+import { EdgeList } from "~packing/edgeList"
 import { isOverlap } from "~packing/packing_utils"
 import  msg from "./msg"
 
@@ -58,4 +59,59 @@ function areUnique(mbins : Array<Bin>) : boolean {
             })
         }
     );
+}
+
+export function constructBins(bins : number[][], blockDims: number[][][], placedRectDims : number[][][] = null) : Array<Bin> {
+    let mbins : Array<Bin> = []; 
+    let placedRects = placedRectDims != null ? constructPlacedRects(placedRectDims) : [];
+
+    bins.forEach((dims : Array<number>, i : number) => {
+        //initialize freeblocks
+        let freeSpaceList = new EdgeList();
+        
+        if(i < blockDims.length) {
+            blockDims[i].forEach((dims : number[], blockNum : number) => {
+               freeSpaceList.push(new FreeSpace({x0: dims[0], y0: dims[1], w: dims[2], h: dims[3]}));
+            });
+        }
+
+
+        let finBin = new Bin({w: dims[0], h: dims[1], freeSpaces: freeSpaceList}); 
+
+        if(i < placedRects.length) {
+            placedRects[i].forEach((rect) => { finBin.place(rect); }, this);
+        }
+
+        mbins.push(finBin);
+    });
+
+    return mbins;
+}
+
+export function constructPlacedRects(rects : number[][][]) : PlacedRect[][] {
+    let mrects : PlacedRect[][] = [];
+
+    rects.forEach((rectDimArray, i) => {
+
+        let binRects : PlacedRect[] = [];
+
+        rectDimArray.forEach((dims : Array<number>, i : number) => {
+            binRects.push(new PlacedRect({id: null, x0: dims[0], y0: dims[1], w: dims[2], h: dims[3]}));
+        });
+
+        mrects.push(binRects);
+
+    });
+
+    return mrects;
+}
+
+export function constructRects(rects : Array<Array<number>>) : Array<Rect> {
+    let mrects : Array<Rect> = [];
+
+    rects.forEach((dims : Array<number>, i : number) => {
+        mrects.push({id: i, w: dims[0], h: dims[1], placed: false})
+    });
+
+    return mrects;
 }

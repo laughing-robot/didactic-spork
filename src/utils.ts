@@ -1,3 +1,8 @@
+export interface Point {
+    x : number;
+    y : number;
+}
+
 export function jsonify(obj, idx : number) {
 
     if (obj == null || obj == undefined) {
@@ -64,4 +69,14 @@ export function jsonify(obj, idx : number) {
 
 
   return obj.toString() // Naively handle everything else
+}
+
+
+export function EuclideanDistance(x1 : Point, x2 : Point) {
+    return { x : Math.pow(MSE(x1.x, x2.x), 0.5), y : Math.pow(MSE(x1.y, x2.y), 0.5) };
+}
+
+
+function MSE(x1 : number, x2 : number) {
+    return Math.pow(x1 - x2, 2);
 }

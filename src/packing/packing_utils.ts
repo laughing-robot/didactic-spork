@@ -29,7 +29,6 @@ export function retrieveOverlap(rect1 : PlacedRect, rect2 : PlacedRect) : Overla
     else if( !(rect1.y0 >= rect2.ye || rect2.y0 >= rect1.ye) ) { //overlap along y
         if(rect1.x0 == rect2.xe) { //glued left to right
             overlap = [[rect1.x0, Math.max(rect1.y0, rect2.y0)], [rect1.x0, Math.min(rect1.ye, rect2.ye)]];
-            console.log("LEFT");
             dir = Direction.Left;
         }
         else if(rect1.xe == rect2.x0) { //glued right to left 

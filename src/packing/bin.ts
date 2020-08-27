@@ -1,6 +1,8 @@
 import { EdgeList } from "~packing/edgeList"
 import { Direction } from "~packing/directions"
 import { jsonify } from "~utils"
+import { BinGridArray } from "~packing/heuristics/utils"
+import { YSymmetryHeuristic, XSymmetryHeuristic } from "~packing/heuristics/symmetry"
 import PriorityQueue from "js-priority-queue"
 
 export interface Rect {
@@ -142,19 +144,35 @@ export class Bin {
     w: number;
     h: number;
     freeSpaces: EdgeList;
+    gridArray : BinGridArray;
     placed: Array<PlacedRect>;
     cached_proposals: Array<Object>;
 
-    constructor({w, h, freeSpaces = new EdgeList(), placed = []}) {
+    constructor({w, h, freeSpaces = new EdgeList(), placed = [], heuristics = [new XSymmetryHeuristic(), new YSymmetryHeuristic()]}) {
         this.w = w;
         this.h = h;
         this.freeSpaces = freeSpaces;
-        this.placed = placed;
+        this.placed = [];
         this.cached_proposals = [];
+
+        placed.forEach((rect) => {
+            this.place(rect);
+        }, this);
 
         if(this.freeSpaces.size() == 0) { //initialize the block
             this.freeSpaces.push(new FreeSpace({x0: 0, y0: 0, w: this.w, h: this.h}));
         }
+
+        this.gridArray = new BinGridArray(this, heuristics, 0.1);
+    }
+
+    place(rect : PlacedRect) {
+        this.placed.push(rect);
+        this.gridArray.update(rect);
+    }
+
+    getHeuristics() : number[] {
+        return this.gridArray.evaluate();
     }
 
     acceptProposals(proposal_list) {
@@ -162,11 +180,6 @@ export class Bin {
     }
 
     purgeProposals() {
-        //iterate through the cache_proposals
-        //remove defunct proposals
-        // for (const [key] in Object.keys(cached_proposals)) {
-        //     console.log(key);
-        // }
         
     }
 
