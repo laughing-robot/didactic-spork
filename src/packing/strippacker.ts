@@ -79,7 +79,6 @@ function addSpaces(freeSpaces, freeSpaceCandidates) {
             freeSpaces.push(freeSpace);
         }
     });
-
 }
 
 

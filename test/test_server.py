@@ -73,16 +73,16 @@ class MyServer(BaseHTTPRequestHandler):
                     if rid == 'undefined': # no free spaces
                         break;
 
-                    w, h, x0, y0, xe, ye = rect['w'], rect['h'], rect['x0'], rect['y0'], rect['xe'], rect['ye']
+                    w, h, x0, y0, xe, ye = rect['w'], rect['h'], rect['x0'], rect['y0'], rect['xe'], rect['ye'];
                     rectangle = plt.Rectangle((x0, y0), w, h, fc='lavenderblush', ec='black')
                     plt.gca().add_patch(rectangle)
 
 
-                for rect in mbin['placed']:
+                for rid, rect in mbin['placed'].items():
                     w, h, x0, y0, xe, ye = rect['w'], rect['h'], rect['x0'], rect['y0'], rect['xe'], rect['ye']
                     rectangle = plt.Rectangle((x0, y0), w, h, fc='cornflowerblue', ec='red')
 
-                    #print("{} {} {} {}".format(w, h, x0, y0))
+                    # print("{} {} {} {}".format(w, h, x0, y0))
                     plt.gca().add_patch(rectangle)
 
                     txt += "id: {} w: {} h: {} x0: {} y0: {} xe: {} ye: {}\n".format(rect['id'], w, h, x0, y0, xe, ye);

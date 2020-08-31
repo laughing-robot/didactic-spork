@@ -13,7 +13,8 @@ export function jsonify(obj, idx : number) {
        return obj.getString();
    }
 
-  var json, objStr = toString.call(obj);
+    var json;  
+    var objStr = String.call(obj);
 
   // Handle strings
   if(objStr == '[object String]') { return '"' + obj + '"' }

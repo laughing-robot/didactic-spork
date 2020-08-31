@@ -22,6 +22,7 @@ export class BinGridArray {
         this.grids = Array.from({length: funcs.length}, () => {return new BinGrid(bin.w, bin.h, increment)}); //this is how many levels
     }
 
+
     get(level : number) {
         return this.grids[level];
     }

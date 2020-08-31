@@ -166,6 +166,10 @@ export class Bin {
         this.gridArray = new BinGridArray(this, heuristics, 0.1);
     }
 
+    getString() {
+        return jsonify({w : this.w, h : this.h, freeSpaces : this.freeSpaces, placed : this.placed}, 0);
+    }
+
     place(rect : PlacedRect) {
         this.placed.push(rect);
         this.gridArray.update(rect);
