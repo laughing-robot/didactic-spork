@@ -1,6 +1,42 @@
+import { PlacedRect } from "~packing/bin";
+
 export interface Point {
     x : number;
     y : number;
+}
+
+export class LineSegment {
+  start: Point;
+  end : Point;
+
+  constructor(start : Point, end : Point) {
+    this.start = start;
+    this.end = end;
+
+    if (this.start == this.end) {
+      throw "Unable to create line";
+    }
+  }
+
+  isVertical() : boolean {
+    return this.start.x == this.end.x;
+  }
+
+  isHorizontal() : boolean {
+    return this.start.y == this.end.y;
+  }
+}
+
+export function contains(rect : PlacedRect, point : Point) {
+  return point.x <= rect.xe && point.x >= rect.x0 && point.y <= rect.ye && point.y <= rect.y0;
+}
+
+export function polarAngle(target : Point, crux : Point = {x: 0, y: 0}) {
+  return Math.atan2((target.y - crux.y), (target.x - crux.x)) + 2*Math.PI * Number(target.y < crux.y);
+}
+
+export function superImposed(rect : PlacedRect, point : Point)  {
+  return (rect.x0 == point.x || rect.xe == point.x) && (rect.y0 == point.y || rect.ye == point.y);
 }
 
 export function jsonify(obj, idx : number) {
@@ -14,7 +50,7 @@ export function jsonify(obj, idx : number) {
    }
 
     var json;  
-    var objStr = String.call(obj);
+    var objStr = String.call(obj);    
 
   // Handle strings
   if(objStr == '[object String]') { return '"' + obj + '"' }
@@ -73,11 +109,20 @@ export function jsonify(obj, idx : number) {
 }
 
 
-export function EuclideanDistance(x1 : Point, x2 : Point) {
-    return { x : Math.pow(MSE(x1.x, x2.x), 0.5), y : Math.pow(MSE(x1.y, x2.y), 0.5) };
+export function EuclideanDistance(x1 : Point, x2 : Point) : number {
+    return Math.pow(MSE(x1.x, x2.x) + MSE(x1.y, x2.y), 0.5);
 }
 
 
 function MSE(x1 : number, x2 : number) {
     return Math.pow(x1 - x2, 2);
+}
+
+export function rotate(origin : Point, target : Point, angle) : Point {
+  var radians = (Math.PI / 180) * angle,
+      cos = Math.cos(radians),
+      sin = Math.sin(radians),
+      nx = (cos * (target.x - origin.x)) + (sin * (target.y - origin.y)) + origin.x,
+      ny = (cos * (target.y - origin.y)) - (sin * (target.x - origin.x)) + origin.y;
+  return {x: nx, y: ny};
 }

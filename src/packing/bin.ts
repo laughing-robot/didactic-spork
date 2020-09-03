@@ -60,6 +60,14 @@ export class PlacedRect implements Rect {
         return this;
     }
 
+    shift({x: deltax, y: deltay}) : PlacedRect {
+        this.x0 = this.x0 - deltax;
+        this.y0 = this.y0 - deltay;
+        this.update();
+
+        return this;
+    }
+
     fromFreeSpace(freeSpace : FreeSpace) : PlacedRect {
 
         this.w = freeSpace.w;

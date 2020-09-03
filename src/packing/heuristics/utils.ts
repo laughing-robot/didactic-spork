@@ -5,9 +5,15 @@ export interface Square {
     col : number;
 }
 
-export interface BinGridHeuristic {
+export interface Heuristic {
+    assessBlock : Function;
+    evaluate : Function;
+}
+
+export interface BinGridHeuristic extends Heuristic {
     updateGrid(grid : BinGrid, rect : PlacedRect) : void; // in-place update
     assessGrid(grid : BinGrid, rects : PlacedRect[]) : number; // out-place evaluation
+    assessBlock(grid : BinGrid, block : PlacedRect) : number; // out-place evaluation
     evaluate(grid : BinGrid) : number; // does an in-place assessment
 }
 
@@ -68,7 +74,6 @@ export class BinGrid {
         this.map[square.row][square.col] = val;
     }
 
-
     /**
      * Fetches box and resolves box border dispute using isLower parameter
      */
@@ -81,6 +86,12 @@ export class BinGrid {
                 {row : this.getBox(rect.xe), col : this.getBox(rect.ye)} ];
     }
 
+    getBounds() : Square[] {
+        return [
+            {row: 0, col : 0}, {row: this.map.length - 1, col : this.map[0].length - 1}
+        ];
+    }
+
     inBounds(square : Square) {
         return square.row > 0 && square.row < this.w && square.col > 0 && square.col < this.h;
     }
@@ -91,6 +102,19 @@ export class BinGrid {
 
     bindCol(val : number) : number {
         return Math.max(0, Math.min(val, this.h - 1));
+    }
+
+    tally(squares : Square[], numType = 0) : number {
+        let total = 0;
+
+        for(let i = squares[0].row; i <= squares[1].row; ++i)
+            for(let j = squares[0].col; j <= squares[1].col; ++j) {
+                let num = this.map[i][j];
+
+                total += num * Number(num*numType >= 0);
+            }
+
+        return total;
     }
 
     copy(grid : BinGrid) : BinGrid {
@@ -157,5 +181,4 @@ export function markFadingSquareBetween(grid : BinGrid, rect : PlacedRect, exten
         }
     }
 }
-
 

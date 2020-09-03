@@ -14,6 +14,12 @@ class SymmetryHeuristic implements BinGridHeuristic {
         this.symFunc = symFunc;
     }
 
+    assessBlock(grid: BinGrid, block: PlacedRect) : number {
+        let newgrid = new BinGrid().copy(grid);
+
+        return newgrid.tally(newgrid.getSquare(block), -1);
+    }
+
     updateGrid(grid : BinGrid, rect : PlacedRect) {
         let context = {symFunc: this.symFunc, val : this.val};
 
@@ -47,9 +53,7 @@ class SymmetryHeuristic implements BinGridHeuristic {
     }
 
     evaluate(grid : BinGrid) {
-        return grid.map.reduce((total, arr : number[]) => { 
-                return total +  arr.reduce((total, num : number) => { return total + num * Number(num > 0) }, 0); 
-            }, 0);
+        return grid.tally(grid.getBounds(), 1);
     }
 }
 
