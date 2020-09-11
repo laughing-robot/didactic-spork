@@ -1,8 +1,24 @@
 import { PlacedRect } from "~packing/bin";
 
-export interface Point {
+export class Point {
     x : number;
     y : number;
+
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+    }
+
+    shift(new_origin : Point) {
+      this.x = this.x - new_origin.x;
+      this.y = this.y - new_origin.y;
+
+      return this;
+    }
+
+    equals(point : Point) {
+      return this.x == point.x && this.y == point.y;
+    }
 }
 
 export class LineSegment {
@@ -31,12 +47,8 @@ export function contains(rect : PlacedRect, point : Point) {
   return point.x <= rect.xe && point.x >= rect.x0 && point.y <= rect.ye && point.y <= rect.y0;
 }
 
-export function polarAngle(target : Point, crux : Point = {x: 0, y: 0}) {
+export function polarAngle(target : Point, crux : Point = new Point(0, 0)) {
   return Math.atan2((target.y - crux.y), (target.x - crux.x)) + 2*Math.PI * Number(target.y < crux.y);
-}
-
-export function superImposed(rect : PlacedRect, point : Point)  {
-  return (rect.x0 == point.x || rect.xe == point.x) && (rect.y0 == point.y || rect.ye == point.y);
 }
 
 export function jsonify(obj, idx : number) {
@@ -124,5 +136,5 @@ export function rotate(origin : Point, target : Point, angle) : Point {
       sin = Math.sin(radians),
       nx = (cos * (target.x - origin.x)) + (sin * (target.y - origin.y)) + origin.x,
       ny = (cos * (target.y - origin.y)) - (sin * (target.x - origin.x)) + origin.y;
-  return {x: nx, y: ny};
+  return new Point(nx, ny);
 }

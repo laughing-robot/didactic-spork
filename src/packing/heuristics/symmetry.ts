@@ -1,23 +1,39 @@
 import { Bin, PlacedRect } from "~packing/bin";
-import { BinGridHeuristic, BinGrid, Square, markFadingSquareBetween } from "~/packing/heuristics/utils"
+import { BinGridHeuristic, BinGrid, Square, markFadingSquareBetween, markSquare, getSize } from "~/packing/heuristics/utils"
 
 
 class SymmetryHeuristic implements BinGridHeuristic {
         
     val : number;
-    extension : number;
+    extension_percent : number;
     symFunc : Function;
 
-    constructor(symFunc, val = 1.0, extension = 100) {
+    constructor(symFunc, val = 1.0, extension = 0.15) {
         this.val = val;
-        this.extension = extension;
+        this.extension_percent = extension;
         this.symFunc = symFunc;
     }
 
     assessBlock(grid: BinGrid, block: PlacedRect) : number {
-        let newgrid = new BinGrid().copy(grid);
+        let newgrid = new BinGrid().scale(grid); 
 
-        return newgrid.tally(newgrid.getSquare(block), -1);
+        let [ square1, square2 ] = newgrid.getSquare(block);
+        let squareArea : number = getSize([square1, square2]);
+
+        this.updateGrid(newgrid, block); 
+        let uncancelled = Math.min(1, newgrid.tally([square1, square2], 1) / squareArea);
+
+        //IDEA: union-find islands of negatives and take that into consideration
+        // the size of the islands will help decide which squares are better
+        newgrid.copy(grid);
+        let enemies_covered = newgrid.tally([square1, square2], -1);
+
+        console.log(block.getString())
+        console.log("Uncancelled " + uncancelled);
+        console.log(1-uncancelled)
+        console.log("Enemies cancelled: " + (-1 * enemies_covered) / squareArea);
+
+        return (1-uncancelled) + Math.abs(enemies_covered) / squareArea;
     }
 
     updateGrid(grid : BinGrid, rect : PlacedRect) {
@@ -27,7 +43,6 @@ class SymmetryHeuristic implements BinGridHeuristic {
             let reflectedSquare = this.symFunc(grid, square);
             grid.set(square, grid.get(square) + this.val);
             grid.set(reflectedSquare, grid.get(reflectedSquare) - this.val);
-
         };
 
         let edgeFunc = function (grid, square, distToSquare) {
@@ -39,7 +54,7 @@ class SymmetryHeuristic implements BinGridHeuristic {
 
         };
 
-        markFadingSquareBetween(grid, rect, this.extension, centerFunc.bind(context), edgeFunc.bind(context));
+        markFadingSquareBetween(grid, rect, this.extension_percent, centerFunc.bind(context), edgeFunc.bind(context));
     }
 
     assessGrid(grid : BinGrid, rects : PlacedRect[]) {
@@ -58,13 +73,13 @@ class SymmetryHeuristic implements BinGridHeuristic {
 }
 
 export class YSymmetryHeuristic extends SymmetryHeuristic {
-    constructor(val = 1.0, extension = 100) {
+    constructor(val = 1.0, extension = 0.15) {
         super(reflectSquareOverY, val, extension);
     }
 }
 
 export class XSymmetryHeuristic extends SymmetryHeuristic {
-    constructor(val = 1.0, extension = 100) {
+    constructor(val = 1.0, extension = 0.15) {
         super(reflectSquareOverX, val, extension);
     }
 }

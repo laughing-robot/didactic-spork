@@ -3,7 +3,7 @@ import { Direction } from "~packing/directions"
 import { jsonify } from "~utils"
 import { BinGridArray } from "~packing/heuristics/utils"
 import { YSymmetryHeuristic, XSymmetryHeuristic } from "~packing/heuristics/symmetry"
-import PriorityQueue from "js-priority-queue"
+import PriorityQueue from "js-priority-queue";
 
 export interface Rect {
     id: number,
@@ -185,6 +185,10 @@ export class Bin {
 
     getHeuristics() : number[] {
         return this.gridArray.evaluate();
+    }
+
+    getAssessment(block : PlacedRect) : number[] {
+        return this.gridArray.assessBlock(block);
     }
 
     acceptProposals(proposal_list) {

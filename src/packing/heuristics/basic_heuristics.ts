@@ -8,19 +8,34 @@ import { EuclideanDistance, Point, rotate, LineSegment, polarAngle, contains, su
 */
 class CenterOfMass implements Heuristic {
     k : number;
-    shift_delta: number;
 
-    constructor(k = 5, shift_delta = 1e-5) {
+    constructor(k = 5) {
         this.k = k;
     }
 
     assessBlock(bin : Bin, oblock : PlacedRect) {
         let {point, tmass} = this.computeCenterOfMass(bin.placed);
-        let centerPoint = {x: bin.w/2, y: bin.h/2};
-        let block = new PlacedRect({}).fromPlacedRect(oblock).shift(centerPoint);
+        let centerPoint = new Point(bin.w/2, bin.h/2);
+        let block = new PlacedRect({}).fromPlacedRect(oblock).shift(point);
 
         //rotate about origin to determine the slope
-        let targetAngle = polarAngle(rotate(centerPoint, point, 180));
+        let targetAngle = polarAngle(centerPoint, point);
+        let total = 0;
+
+        for(let i = block.x0; i < block.xe; i = i + this.k) {
+           let i_end = Math.min(block.xe, i + this.k); 
+
+            for(let j = block.y0; j < block.ye; j = j + this.k) {
+                let j_end = Math.min(block.xe, i + this.k); 
+                let block_center = new Point((i + i_end)/2,(j + j_end)/2);
+                let block_angle = polarAngle(block_center, point);
+                let block_area = (i_end - i) * (j_end - j);
+
+                total +=  EuclideanDistance(block_center, point)/bin.w * Math.cos(block_angle-targetAngle) * block_area; 
+            }
+        }
+
+        return total;
     }
 
     computeCenterOfMass(rects : PlacedRect[]) {
@@ -36,11 +51,11 @@ class CenterOfMass implements Heuristic {
             tarea += area;
         });
 
-        return { point : {x: xc / tarea, y : yc / tarea}, tmass: tarea};
+        return { point : new Point(xc / tarea, yc / tarea), tmass: tarea};
     } 
 
     evaluate(bin : Bin)  {
-        return EuclideanDistance({x: 0, y: 0}, this.computeCenterOfMass(bin.placed).point);
+        return EuclideanDistance(new Point(0, 0), this.computeCenterOfMass(bin.placed).point);
     }
 }
 

@@ -48,6 +48,16 @@ export class BinGridArray {
 
         return result;
     }
+
+    assessBlock(block : PlacedRect) {
+        let result = [];
+
+        this.funcs.forEach((func, i) => {
+            result.push(func.assessBlock(this.grids[i], block));
+        });
+
+        return result;
+    }
 }
 
 export class BinGrid {
@@ -57,7 +67,7 @@ export class BinGrid {
     h : number;
     w : number;
 
-    constructor(w = 1.0, h = 1.0, increment = 0.1) {
+    constructor(w = 0.1, h = 0.1, increment = 0.1) {
         if (w/increment % 1 != 0 || h/increment % 1 != 0) throw "construction failed due to uneven division by increment";
 
         this.map = Array.from(Array(w/increment), () => new Array(h/increment).fill(0));
@@ -125,6 +135,17 @@ export class BinGrid {
             }
         }
 
+        this.increment = grid.increment;
+
+        return this;
+    }
+
+    scale(grid : BinGrid) : BinGrid {
+        this.h = grid.h; 
+        this.w = grid.w;
+        this.increment = grid.increment;
+        this.map = Array.from(Array(this.w), () => new Array(this.h).fill(0));
+
         return this;
     }
 
@@ -167,13 +188,18 @@ export function markFadingSquareBetween(grid : BinGrid, rect : PlacedRect, exten
 
     let [ square1, square2 ] = grid.getSquare(rect);
 
-    for(let i = grid.bindRow(square1.row - extension); i <= grid.bindRow(square2.row + extension); ++i) {
-        for(let j = grid.bindCol(square1.col - extension); j <= grid.bindCol(square2.col + extension); ++j) {
+    let extension_h : number = Math.round(grid.h * extension); 
+    let extension_w : number = Math.round(grid.w * extension); 
+
+    for(let i = grid.bindRow(square1.row - extension_w); i <= grid.bindRow(square2.row + extension_w); ++i) {
+        for(let j = grid.bindCol(square1.col - extension_h); j <= grid.bindCol(square2.col + extension_h); ++j) {
             if (i < square1.row || i > square2.row || j < square1.col || j > square2.col) { // if in the 'shadow' of the square
                 let distToRealSquare = (i - square2.row) * Number(i > square2.row) + (square1.row - i) * Number(i < square1.row) 
                     + (j - square2.col) * Number(j > square2.col) + (square1.col - j) * Number(j < square1.col);
 
-                if(applyToEdge != null) applyToEdge(grid, {row : i, col : j}, distToRealSquare);
+                if(applyToEdge != null) {
+                    applyToEdge(grid, {row : i, col : j}, distToRealSquare);
+                } 
             }
             else {
                 applyTo(grid, {row : i, col : j});
@@ -181,4 +207,9 @@ export function markFadingSquareBetween(grid : BinGrid, rect : PlacedRect, exten
         }
     }
 }
+
+export function getSize(blockRange : Square[], extension : number =  0) {
+    return (blockRange[1].row - blockRange[0].row + 1 + extension) 
+            * (blockRange[1].col - blockRange[0].col + 1 + extension); 
+} 
 
