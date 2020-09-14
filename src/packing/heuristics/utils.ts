@@ -6,58 +6,11 @@ export interface Square {
 }
 
 export interface Heuristic {
-    assessBlock : Function;
-    evaluate : Function;
-}
-
-export interface BinGridHeuristic extends Heuristic {
-    updateGrid(grid : BinGrid, rect : PlacedRect) : void; // in-place update
-    assessGrid(grid : BinGrid, rects : PlacedRect[]) : number; // out-place evaluation
-    assessBlock(grid : BinGrid, block : PlacedRect) : number; // out-place evaluation
-    evaluate(grid : BinGrid) : number; // does an in-place assessment
-}
-
-export class BinGridArray {
-    grids : Array<BinGrid>;
-    funcs : Array<BinGridHeuristic>;
+    init(bin: Bin) : void;
+    update(rect : PlacedRect) : void;
+    assessBlock(rect : PlacedRect) : number;
+    evaluate() : number;
     bin : Bin;
-
-    constructor(bin, funcs, increment) {
-        this.funcs = funcs;
-        this.bin = bin;
-        this.grids = Array.from({length: funcs.length}, () => {return new BinGrid(bin.w, bin.h, increment)}); //this is how many levels
-    }
-
-
-    get(level : number) {
-        return this.grids[level];
-    }
-
-    update(rect : PlacedRect) {
-        this.funcs.forEach((func, i) => {
-            func.updateGrid(this.grids[i], rect);
-        }, this);
-    }
-
-    evaluate() {
-        let result = [];
-
-        this.funcs.forEach((func, i) => {
-            result.push(func.evaluate(this.grids[i]));
-        });
-
-        return result;
-    }
-
-    assessBlock(block : PlacedRect) {
-        let result = [];
-
-        this.funcs.forEach((func, i) => {
-            result.push(func.assessBlock(this.grids[i], block));
-        });
-
-        return result;
-    }
 }
 
 export class BinGrid {

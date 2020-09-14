@@ -1,7 +1,7 @@
 import { EdgeList } from "~packing/edgeList"
 import { Direction } from "~packing/directions"
 import { jsonify } from "~utils"
-import { BinGridArray } from "~packing/heuristics/utils"
+import { Heuristic } from "~packing/heuristics/utils"
 import { YSymmetryHeuristic, XSymmetryHeuristic } from "~packing/heuristics/symmetry"
 import PriorityQueue from "js-priority-queue";
 
@@ -152,8 +152,8 @@ export class Bin {
     w: number;
     h: number;
     freeSpaces: EdgeList;
-    gridArray : BinGridArray;
     placed: Array<PlacedRect>;
+    heuristics : Array<Heuristic>;
     cached_proposals: Array<Object>;
 
     constructor({w, h, freeSpaces = new EdgeList(), placed = [], heuristics = [new XSymmetryHeuristic(), new YSymmetryHeuristic()]}) {
@@ -161,7 +161,12 @@ export class Bin {
         this.h = h;
         this.freeSpaces = freeSpaces;
         this.placed = [];
+        this.heuristics = heuristics;
         this.cached_proposals = [];
+
+        this.heuristics.forEach((heuristic : Heuristic) => {
+            heuristic.init(this);
+        });
 
         placed.forEach((rect) => {
             this.place(rect);
@@ -171,7 +176,6 @@ export class Bin {
             this.freeSpaces.push(new FreeSpace({x0: 0, y0: 0, w: this.w, h: this.h}));
         }
 
-        this.gridArray = new BinGridArray(this, heuristics, 0.1);
     }
 
     getString() {
@@ -180,15 +184,21 @@ export class Bin {
 
     place(rect : PlacedRect) {
         this.placed.push(rect);
-        this.gridArray.update(rect);
+        this.heuristics.forEach(heuristic => {
+            heuristic.update(rect);
+        });
     }
 
     getHeuristics() : number[] {
-        return this.gridArray.evaluate();
+        return this.heuristics.map(heuristic => {
+            return heuristic.evaluate();
+        });
     }
 
     getAssessment(block : PlacedRect) : number[] {
-        return this.gridArray.assessBlock(block);
+        return this.heuristics.map(heuristic => {
+            return heuristic.assessBlock(block);
+        });
     }
 
     acceptProposals(proposal_list) {
