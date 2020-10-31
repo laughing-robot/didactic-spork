@@ -33,7 +33,7 @@ class SymmetryHeuristic implements Heuristic {
     }
 
     evaluate() : number {
-        return this.evaluateGrid(this.binGrid);
+        return (1 - this.evaluateGrid(this.binGrid) / (this.binGrid.h * this.binGrid.w / 2));
     }
 
     evaluateGrid(grid : BinGrid) {

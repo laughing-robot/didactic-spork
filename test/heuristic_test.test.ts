@@ -1,11 +1,12 @@
 import { Rect, Bin, FreeSpace, PlacedRect } from "~packing/bin";
 import { constructBins, constructPlacedRects  } from "./pack_test_utils"
+import { EuclideanDistance, Point } from "~utils";
 
 const delta : number = 1e-12;
 
 describe('symmetric heuristic test', () => {
 
-    test('empty_assess_block tests', () => {
+    test('symmetry:_empty_assess_block', () => {
         let binDims = [ [20, 10], [10, 20] ];
 
         let proposalDims = [
@@ -14,7 +15,7 @@ describe('symmetric heuristic test', () => {
         ];
 
         let bins : Bin[] = constructBins(binDims, []);
-        let results = proposeBin(bins[0], constructPlacedRects(proposalDims)[0]);
+        let results = proposeBlock(bins[0], constructPlacedRects(proposalDims)[0]);
 
         // x - symmetry assessment
         expect(isEqual(results[0][0], 1)).toBeTruthy();
@@ -28,7 +29,7 @@ describe('symmetric heuristic test', () => {
         expect(isZero(results[3][0])).toBeTruthy();
         expect(isZero(results[3][1])).toBeTruthy();
 
-        results = proposeBin(bins[1], constructPlacedRects(proposalDims)[1]);
+        results = proposeBlock(bins[1], constructPlacedRects(proposalDims)[1]);
 
         // y - symmetry assessment
         expect(isEqual(results[0][0], 1)).toBeTruthy();
@@ -41,7 +42,7 @@ describe('symmetric heuristic test', () => {
 
     });
 
-    test('self-fulfilling symmetry block', () => {
+    test('symmetry:_satisfied_block', () => {
         let binDims = [ [20, 20] ];
         let rectDims = [ 
             [ [9, 9, 2, 2] ] 
@@ -50,11 +51,11 @@ describe('symmetric heuristic test', () => {
         let bins : Bin[] = constructBins(binDims, [], rectDims);
         let mlist : number[] = bins[0].getHeuristics();
 
-        expect(isZero(mlist[0])).toBeTruthy();
-        expect(isZero(mlist[1])).toBeTruthy();
+        expect(isOne(mlist[0])).toBeTruthy();
+        expect(isOne(mlist[1])).toBeTruthy();
     });
 
-    test('symmetry balanced_assess_block', () => {
+    test('symmetry:_balanced_assess_block', () => {
         let binDims = [ [20, 20] ];
         let rectDims = [ 
             [ [9, 9, 2, 2] ] 
@@ -65,7 +66,7 @@ describe('symmetric heuristic test', () => {
         ];
 
         let bins : Bin[] = constructBins(binDims, [], rectDims);
-        let results = proposeBin(bins[0], constructPlacedRects(proposalDims)[0]);
+        let results = proposeBlock(bins[0], constructPlacedRects(proposalDims)[0]);
 
         expect(isEqual(results[0][0], 1)).toBeTruthy();
         expect(isEqual(results[0][0], results[0][1])).toBeTruthy();
@@ -79,7 +80,7 @@ describe('symmetric heuristic test', () => {
         expect(isEqual(results[3][0], results[3][1])).toBeTruthy();
     });
 
-    test('symmetry satisfying_assess_block', () => {
+    test('symmetry:_satisfied_assess_block', () => {
         let binDims = [ [20, 10], [20, 10] ];
         let rectDims = [
             [ [2, 5, 10, 4], [1, 0, 6, 4.5] ],
@@ -92,7 +93,7 @@ describe('symmetric heuristic test', () => {
         ];
 
         let bins : Bin[] = constructBins(binDims, [], rectDims);
-        let results = proposeBin(bins[0], constructPlacedRects(proposalDims)[0]);
+        let results = proposeBlock(bins[0], constructPlacedRects(proposalDims)[0]);
 
         // bin 1
         expect(isGreaterThanOrEqual(results[0][0], 1)).toBeTruthy();
@@ -100,14 +101,14 @@ describe('symmetric heuristic test', () => {
         expect(isLess(results[1][0], results[2][0]));
         expect(isGreater(results[1][1], results[2][1]));
 
-        results = proposeBin(bins[1], constructPlacedRects(proposalDims)[1]);
+        results = proposeBlock(bins[1], constructPlacedRects(proposalDims)[1]);
 
         // bin 2
         expect(isGreaterThanOrEqual(results[0][0], 1)).toBeTruthy();
         expect(isGreaterThanOrEqual(results[0][1], 1)).toBeTruthy();
     });
 
-    test('perfect xy-symmetry with two rects', () => {
+    test('symmetry:_balanced_xy-symmetry', () => {
         let binDims = [ [20, 10] ];
        let rectDims = [ 
            [ [8, 4, 2, 2], [10, 4, 2, 2], [2, 3, 4, 4], [14, 3, 4, 4] ] 
@@ -116,11 +117,11 @@ describe('symmetric heuristic test', () => {
        let bins : Bin[] = constructBins(binDims, [], rectDims);
        let mlist : number[] = bins[0].getHeuristics();
 
-       expect(isZero(mlist[0])).toBeTruthy();
-       expect(isZero(mlist[1])).toBeTruthy();
+       expect(isOne(mlist[0])).toBeTruthy();
+       expect(isOne(mlist[1])).toBeTruthy();
     });
 
-    test('perfect y-symmetry, imperfect x-symmetry', () => {
+    test('symmetry:_sym_x_sym_y', () => {
         let binDims = [ [20, 10] ];
         let rectDims = [ 
             [ [0, 2, 8, 5], [12, 2, 8, 5] ] 
@@ -129,12 +130,12 @@ describe('symmetric heuristic test', () => {
         let bins : Bin[] = constructBins(binDims, [], rectDims);
         let mlist : number[] = bins[0].getHeuristics();
 
-        expect(isZero(mlist[0])).toBeTruthy();
-        expect(isZero(mlist[1])).toBeFalsy();
+        expect(isOne(mlist[0])).toBeTruthy();
+        expect(isOne(mlist[1])).toBeFalsy();
     });
 
 
-    test('perfect x-symmetry, imperfect y-symmetry', () => {
+    test('symmetry:_sym_x_non-sym_y', () => {
         let binDims = [ [20, 10] ];
         let rectDims = [ 
             [ [0, 1, 8, 3], [0, 6, 8, 3] ] 
@@ -143,11 +144,11 @@ describe('symmetric heuristic test', () => {
         let bins : Bin[] = constructBins(binDims, [], rectDims);
         let mlist : number[] = bins[0].getHeuristics();
 
-        expect(isZero(mlist[0])).toBeFalsy();
-        expect(isZero(mlist[1])).toBeTruthy();
+        expect(isOne(mlist[0])).toBeFalsy();
+        expect(isOne(mlist[1])).toBeTruthy();
     });
 
-    test('symmetry_offset_x testing', () => {
+    test('symmetry:_offset_x', () => {
 
         let binDims = [ [20, 10], [20, 10], [20, 10], [20, 10] ];
         let rectDims = [ 
@@ -162,18 +163,18 @@ describe('symmetric heuristic test', () => {
 
 
         // gold standard
-        expect(isZero(hresults[0][0])).toBeTruthy();
-        expect(isZero(hresults[0][1])).toBeTruthy();
+        expect(isOne(hresults[0][0])).toBeTruthy();
+        expect(isOne(hresults[0][1])).toBeTruthy();
 
         //compare others
         for(let i = 1; i < hresults.length; ++i) {
-            expect(isLess(hresults[i-1][0], hresults[i][0])).toBeTruthy();
+            expect(isGreater(hresults[i-1][0], hresults[i][0])).toBeTruthy();
             expect(isEqual(hresults[i-1][1], hresults[i][1])).toBeTruthy();
         };
 
     });
 
-    test('symmetry_offset_y testing', () => {
+    test('symmetry:_offset_y', () => {
 
         let binDims = [ [20, 10], [20, 10], [20, 10], [20, 10] ];
         let rectDims = [ 
@@ -190,12 +191,12 @@ describe('symmetric heuristic test', () => {
 
 
         // gold standard
-        expect(isZero(hresults[0][0])).toBeTruthy();
-        expect(isZero(hresults[0][1])).toBeTruthy();
+        expect(isOne(hresults[0][0])).toBeTruthy();
+        expect(isOne(hresults[0][1])).toBeTruthy();
 
         //compare others
         for(let i = 1; i < hresults.length; ++i) {
-             expect(isLess(hresults[i-1][1], hresults[i][1])).toBeTruthy();
+             expect(isGreater(hresults[i-1][1], hresults[i][1])).toBeTruthy();
              expect(isEqual(hresults[i-1][0], hresults[i][0])).toBeTruthy();
          };
      });
@@ -203,16 +204,127 @@ describe('symmetric heuristic test', () => {
 });
 
 describe("Center Mass tests", () => {
-    test('balanced center mass', () => {
+
+    let binDims = [ [20, 10], [20, 10], [20, 10], [20, 10], [20, 10] ];
+    let rectDims = [ 
+        [], //empty
+        [ [5, 8, 4, 2], [0, 5, 3, 3.5] ], //top left
+        [ [ 0, 1, 4.5, 4 ], [5, 2, 2, 4], [8, 0, 2, 5], [7, 7, 2, 2] ], //bottom left 
+        [ [11, 5, 2, 2], [12, 8, 3, 2], [15, 6, 4, 2], [17, 8.5, 3, 1], [4, 2, 1, 1], [8, 7, 2, 2] ], //top right
+        [ [10.5, 0.5, 6, 4], [13, 5, 2, 2], [18, 1, 2, 4], [7, 3, 2.5, 8] ] //bottom right
+    ];
+
+    let bins : Bin[] = constructBins(binDims, [], rectDims);
+
+    test('cm:_empty', () => {
+       let results = bins[0].getHeuristics();
+       console.log(results);
+       expect(isOne(results[2])).toBeTruthy();
+
+       let proposalDims = [
+        [ [9, 4, 2, 2], [9, 5, 2, 2], [9, 6, 2, 2], [9, 7, 2, 2], [9, 8, 2, 2], [12, 8, 2, 2], [0, 0, 8, 8], [6, 0, 8, 8] ]
+       ];
+
+       let proposals = constructPlacedRects(proposalDims);
+       let assessment = proposeBlock(bins[0], proposals[0]);
+
+        
+        for(let i = 0; i < 4; ++i) {
+            expect(isGreater(assessment[i][2], assessment[i+1][2])).toBeTruthy();
+        }
+       expect(isGreater(assessment[7][2], assessment[6][2])).toBeTruthy();
 
     });
+
+    test('cm:_top_left_imbalanced_evaluate', () => {
+        // 3.87837, 7.7229
+        let results = bins[1].getHeuristics();
+        expect(isWithin(results[2], computeCMVal(6.69989091455, bins[1]), 1e-5)).toBeTruthy();
+
+
+        let proposalDims = [
+            [ [4, 7.5, 1, 0.5], [4, 2.75, 1, 0.5], [16, 2.75, 1, 0.5], [16, 7.5, 1, 0.5] ]
+        ];
+
+        let proposals = constructPlacedRects(proposalDims);
+        let assessment = proposeBlock(bins[1], proposals[0]);
+
+        expect(isLess(assessment[0][2], assessment[1][2])).toBeTruthy();
+        expect(isLess(assessment[1][2], assessment[2][2])).toBeTruthy();
+        expect(isLess(assessment[3][2], assessment[2][2])).toBeTruthy();
+        expect(isLess(assessment[1][2], assessment[3][2])).toBeTruthy();
+    });
+
+    test('cm:_bottom_left_imbalanced_evaluate', () => {
+        // 5.2625, 3.575
+        let results = bins[2].getHeuristics();
+        expect(isWithin(computeCMVal(4.947174, bins[2]), results[2], 1e-5)).toBeTruthy();
+
+        let proposalDims = [
+            [ [4, 7.5, 1, 0.5], [4, 2.75, 1, 0.5], [16, 2.75, 1, 0.5], [16, 7.5, 1, 0.5] ]
+        ];
+
+        let proposals = constructPlacedRects(proposalDims);
+        let assessment = proposeBlock(bins[2], proposals[0]);
+
+        expect(isGreater(assessment[3][2], assessment[2][2])).toBeTruthy();
+        expect(isGreater(assessment[3][2], assessment[0][2])).toBeTruthy();
+        expect(isGreater(assessment[2][2], assessment[0][2])).toBeTruthy();
+        expect(isGreater(assessment[0][2], assessment[1][2])).toBeTruthy();
+    });
+
+    test('cm:_top_right_imbalanced_evaluate', () => {
+        //13.884615, 7.519230769  
+        let results = bins[3].getHeuristics();
+        expect(isWithin(results[2], computeCMVal(4.629984, bins[3]), 1e-5)).toBeTruthy();
+
+        let proposalDims = [
+            [ [4, 7.5, 1, 0.5], [4, 2.75, 1, 0.5], [16, 2.75, 1, 0.5], [16, 7.5, 1, 0.5] ]
+        ];
+
+        let proposals = constructPlacedRects(proposalDims);
+        let assessment = proposeBlock(bins[3], proposals[0]);
+
+        expect(isGreater(assessment[1][2], assessment[0][2])).toBeTruthy();
+        expect(isGreater(assessment[1][2], assessment[2][2])).toBeTruthy();
+        expect(isGreater(assessment[0][2], assessment[2][2])).toBeTruthy();
+        expect(isGreater(assessment[2][2], assessment[3][2])).toBeTruthy();
+    });
+
+    test('cm:_bottom_right_imbalanced_evaluate', () => {
+        // 12.44642857143, 4.42857142857 
+        let results = bins[4].getHeuristics();
+        expect(isWithin(results[2], computeCMVal(2.51227852, bins[4]), 1e-5)).toBeTruthy();
+
+        let proposalDims = [
+            [ [4, 7.5, 1, 0.5], [4, 2.75, 1, 0.5], [16, 2.75, 1, 0.5], [16, 7.5, 1, 0.5] ]
+        ];
+
+        let proposals = constructPlacedRects(proposalDims);
+        let assessment = proposeBlock(bins[4], proposals[0]);
+
+        expect(isGreater(assessment[0][2], assessment[1][2])).toBeTruthy();
+        expect(isGreater(assessment[0][2], assessment[3][2])).toBeTruthy();
+        expect(isGreater(assessment[1][2], assessment[3][2])).toBeTruthy();
+        expect(isGreater(assessment[3][2], assessment[2][2])).toBeTruthy();
+    });
+
 });
+
 
 function isZero(val : number) {
     return isEqual(val, 0);
 }
 
+function isOne(val : number) {
+    return isEqual(val, 1);
+}
+
 function isEqual(val1 : number, val2 : number) {
+    return Math.abs(val1 - val2) < delta;
+}
+
+function isWithin(val1 : number, val2 : number, delta : number) {
     return Math.abs(val1 - val2) < delta;
 }
 
@@ -232,6 +344,10 @@ function isLessThanOrEqual(val1 : number, val2 : number) {
     return isLess(val1, val2) || isEqual(val1, val2);
 }
 
+function computeCMVal(center_val : number, bin : Bin) {
+    return 1 - center_val * 2 / EuclideanDistance(new Point(0, 0), new Point(bin.w, bin.h));
+}
+
 function evaluateBins(bins : Bin[]) {
     let heuristic_values : number[][] = [];
 
@@ -243,8 +359,7 @@ function evaluateBins(bins : Bin[]) {
     return heuristic_values;
 }
 
-
-function proposeBin(bin : Bin, rects : PlacedRect[]) : number[][] {
+function proposeBlock(bin : Bin, rects : PlacedRect[]) : number[][] {
     let results = [];
 
     rects.forEach((rect) => {

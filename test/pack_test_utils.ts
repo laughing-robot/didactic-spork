@@ -1,6 +1,7 @@
 import { Rect, Bin, PlacedRect, FreeSpace } from "~packing/bin"
 import { EdgeList } from "~packing/edgeList"
 import { isOverlap } from "~packing/packing_utils"
+import { Heuristic } from "~packing/heuristics/utils";
 import  msg from "./msg"
 
 export function verifyPacking(mbins) {
@@ -76,7 +77,7 @@ export function constructBins(bins : number[][], blockDims: number[][][], placed
         }
 
 
-        let finBin = new Bin({w: dims[0], h: dims[1], freeSpaces: freeSpaceList}); 
+        let finBin : Bin = new Bin({w: dims[0], h: dims[1], freeSpaces: freeSpaceList}); 
 
         if(i < placedRects.length) {
             placedRects[i].forEach((rect) => { finBin.place(rect); }, this);

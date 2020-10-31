@@ -2,6 +2,7 @@ import { EdgeList } from "~packing/edgeList"
 import { Direction } from "~packing/directions"
 import { jsonify } from "~utils"
 import { Heuristic } from "~packing/heuristics/utils"
+import { CenterOfMassHeuristic } from "~packing/heuristics/centerofmass"
 import { YSymmetryHeuristic, XSymmetryHeuristic } from "~packing/heuristics/symmetry"
 import PriorityQueue from "js-priority-queue";
 
@@ -156,7 +157,7 @@ export class Bin {
     heuristics : Array<Heuristic>;
     cached_proposals: Array<Object>;
 
-    constructor({w, h, freeSpaces = new EdgeList(), placed = [], heuristics = [new XSymmetryHeuristic(), new YSymmetryHeuristic()]}) {
+    constructor({w, h, freeSpaces = new EdgeList(), placed = [], heuristics = [new XSymmetryHeuristic(), new YSymmetryHeuristic(), new CenterOfMassHeuristic()]}) {
         this.w = w;
         this.h = h;
         this.freeSpaces = freeSpaces;
